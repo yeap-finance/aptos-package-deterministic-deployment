@@ -28,13 +28,11 @@
 /// 4. Emits 'Freeze' event with the address of the object with the frozen code.
 /// Note: There is no unfreeze function as this gives no benefit if the user can freeze/unfreeze modules at will.
 ///       Once modules are marked as immutable, they cannot be made mutable again.
-module aptos_framework::object_code_deployment {
+module object_code_deterministic_deployment::deployment {
     use std::bcs;
     use std::error;
     use std::features;
     use std::signer;
-    use std::vector;
-    use aptos_framework::account;
     use aptos_framework::code;
     use aptos_framework::code::PackageRegistry;
     use aptos_framework::event;
@@ -47,10 +45,8 @@ module aptos_framework::object_code_deployment {
     const ENOT_CODE_OBJECT_OWNER: u64 = 2;
     /// `code_object` does not exist.
     const ECODE_OBJECT_DOES_NOT_EXIST: u64 = 3;
-    /// Current permissioned signer cannot deploy object code.
-    const ENO_CODE_PERMISSION: u64 = 4;
 
-    const OBJECT_CODE_DEPLOYMENT_DOMAIN_SEPARATOR: vector<u8> = b"aptos_framework::object_code_deployment";
+    const OBJECT_CODE_DEPLOYMENT_DOMAIN_SEPARATOR: vector<u8> = b"object_code_deterministic_deployment::deployment";
 
     #[resource_group_member(group = aptos_framework::object::ObjectGroup)]
     /// Internal struct, attached to the object, that holds Refs we need to manage the code deployment (i.e. upgrades).
@@ -81,19 +77,20 @@ module aptos_framework::object_code_deployment {
     /// Publishes the code passed in the function to the newly created object.
     /// The caller must provide package metadata describing the package via `metadata_serialized` and
     /// the code to be published via `code`. This contains a vector of modules to be deployed on-chain.
-    public entry fun publish(
+    public entry fun deterministic_publish(
         publisher: &signer,
+        deterministic_object_seed: vector<u8>,
         metadata_serialized: vector<u8>,
         code: vector<vector<u8>>,
     ) {
-        code::check_code_publishing_permission(publisher);
         assert!(
             features::is_object_code_deployment_enabled(),
             error::unavailable(EOBJECT_CODE_DEPLOYMENT_NOT_SUPPORTED),
         );
 
         let publisher_address = signer::address_of(publisher);
-        let object_seed = object_seed(publisher_address);
+        let object_seed = code_object_seed(deterministic_object_seed);
+
         let constructor_ref = &object::create_named_object(publisher, object_seed);
         let code_signer = &object::generate_signer(constructor_ref);
         code::publish_package_txn(code_signer, metadata_serialized, code);
@@ -105,11 +102,15 @@ module aptos_framework::object_code_deployment {
         });
     }
 
-    inline fun object_seed(publisher: address): vector<u8> {
-        let sequence_number = account::get_sequence_number(publisher) + 1;
+    #[view]
+    public fun create_code_object_address(publisher: address, seed: vector<u8>): address {
+        object::create_object_address(&publisher, code_object_seed(seed))
+    }
+
+    inline fun code_object_seed(seed: vector<u8>): vector<u8> {
         let seeds = vector[];
-        vector::append(&mut seeds, bcs::to_bytes(&OBJECT_CODE_DEPLOYMENT_DOMAIN_SEPARATOR));
-        vector::append(&mut seeds, bcs::to_bytes(&sequence_number));
+        seeds.append(bcs::to_bytes(&OBJECT_CODE_DEPLOYMENT_DOMAIN_SEPARATOR));
+        seeds.append(seed);
         seeds
     }
 
@@ -123,7 +124,6 @@ module aptos_framework::object_code_deployment {
         code: vector<vector<u8>>,
         code_object: Object<PackageRegistry>,
     ) acquires ManagingRefs {
-        code::check_code_publishing_permission(publisher);
         let publisher_address = signer::address_of(publisher);
         assert!(
             object::is_owner(code_object, publisher_address),
@@ -149,3 +149,4 @@ module aptos_framework::object_code_deployment {
         event::emit(Freeze { object_address: object::object_address(&code_object), });
     }
 }
+

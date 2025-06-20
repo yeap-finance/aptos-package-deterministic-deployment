@@ -4,8 +4,10 @@ version = "1.0.0"
 authors = []
 
 [addresses]
+object_code_deterministic_deployment = "_"
 
 [dev-addresses]
+object_code_deterministic_deployment = "0x10"
 
 [dependencies.AptosFramework]
 git = "https://github.com/aptos-labs/aptos-framework.git"
