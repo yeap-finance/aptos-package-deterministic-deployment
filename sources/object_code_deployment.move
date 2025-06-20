@@ -1,5 +1,5 @@
 /// This module allows users to deploy, upgrade and freeze modules deployed to objects on-chain.
-/// This enables users to deploy modules to an object with a unique address each time they are published.
+/// This enables users to deploy modules to objects with deterministic addresses based on a custom seed.
 /// This modules provides an alternative method to publish code on-chain, where code is deployed to objects rather than accounts.
 /// This is encouraged as it abstracts the necessary resources needed for deploying modules,
 /// along with the required authorization to upgrade and freeze modules.
@@ -7,7 +7,7 @@
 /// The functionalities of this module are as follows.
 ///
 /// Publishing modules flow:
-/// 1. Create a new object with the address derived from the publisher address and the object seed.
+/// 1. Create a new object with the address derived from the publisher address and a custom deterministic seed.
 /// 2. Publish the module passed in the function via `metadata_serialized` and `code` to the newly created object.
 /// 3. Emits 'Publish' event with the address of the newly created object.
 /// 4. Create a `ManagingRefs` which stores the extend ref of the newly created object.
@@ -73,10 +73,11 @@ module object_code_deterministic_deployment::deployment {
         object_address: address,
     }
 
-    /// Creates a new object with a unique address derived from the publisher address and the object seed.
+    /// Creates a new object with a deterministic address derived from the publisher address and a custom seed.
     /// Publishes the code passed in the function to the newly created object.
     /// The caller must provide package metadata describing the package via `metadata_serialized` and
     /// the code to be published via `code`. This contains a vector of modules to be deployed on-chain.
+    /// The object address can be predicted using the `create_code_object_address` view function.
     public entry fun deterministic_publish(
         publisher: &signer,
         deterministic_object_seed: vector<u8>,
@@ -103,10 +104,17 @@ module object_code_deterministic_deployment::deployment {
     }
 
     #[view]
+    /// Calculates the deterministic object address for a given publisher and seed.
+    /// This function allows users to predict the address where their code will be deployed
+    /// before calling `deterministic_publish`. The same publisher and seed combination
+    /// will always produce the same object address.
     public fun create_code_object_address(publisher: address, seed: vector<u8>): address {
         object::create_object_address(&publisher, code_object_seed(seed))
     }
 
+    /// Internal function that constructs the seed used for object creation.
+    /// Combines the domain separator with the user-provided seed to ensure
+    /// deterministic and collision-resistant address generation.
     inline fun code_object_seed(seed: vector<u8>): vector<u8> {
         let seeds = vector[];
         seeds.append(bcs::to_bytes(&OBJECT_CODE_DEPLOYMENT_DOMAIN_SEPARATOR));
@@ -116,7 +124,7 @@ module object_code_deterministic_deployment::deployment {
 
     /// Upgrades the existing modules at the `code_object` address with the new modules passed in `code`,
     /// along with the metadata `metadata_serialized`.
-    /// Note: If the modules were deployed as immutable when calling `publish`, the upgrade will fail.
+    /// Note: If the modules were deployed as immutable when calling `deterministic_publish`, the upgrade will fail.
     /// Requires the publisher to be the owner of the `code_object`.
     public entry fun upgrade(
         publisher: &signer,
