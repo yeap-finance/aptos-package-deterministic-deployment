@@ -89,7 +89,6 @@ module object_code_deterministic_deployment::deployment {
             error::unavailable(EOBJECT_CODE_DEPLOYMENT_NOT_SUPPORTED),
         );
 
-        let publisher_address = signer::address_of(publisher);
         let object_seed = code_object_seed(deterministic_object_seed);
 
         let constructor_ref = &object::create_named_object(publisher, object_seed);
