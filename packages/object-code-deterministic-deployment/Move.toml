@@ -11,8 +11,8 @@ object_code_deterministic_deployment = "_"
 object_code_deterministic_deployment = "0x10"
 
 [dependencies.AptosFramework]
-git = "https://github.com/aptos-labs/aptos-framework.git"
+git = "https://github.com/aptos-labs/aptos-core.git"
 rev = "mainnet"
-subdir = "aptos-framework"
+subdir = "aptos-move/framework/aptos-framework"
 
 [dev-dependencies]
