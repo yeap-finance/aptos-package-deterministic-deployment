@@ -1,0 +1,17 @@
+[package]
+name = "proxy-account"
+version = "1.0.0"
+authors = ["oneke@yeap.finance"]
+
+[addresses]
+proxy = "_"
+
+[dev-addresses]
+proxy = "0x10"
+
+[dependencies.AptosFramework]
+git = "https://github.com/aptos-labs/aptos-framework.git"
+rev = "mainnet"
+subdir="aptos-framework"
+
+[dev-dependencies]
