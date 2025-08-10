@@ -39,58 +39,7 @@ Yeaptor is a set of Aptos Move packages and lightweight tools to help developers
    - Proxy accounts: create/generate admin-gated resource account signers
    - Deployer: resource-account admin orchestrates deterministic deployments
 
-## Deployment diagrams
-
-### 1) Create Deployer via Resource-account publish and init flow
-```mermaid
-sequenceDiagram
-    participant Dev as Developer
-    participant CLI as Aptos CLI
-    participant FW as Aptos Framework
-    participant Dep as package_deployer::deployer
-    Dev->>CLI: aptos move create-resource-account-and-publish-package
-    CLI->>FW: Publish package under resource account
-    FW->>Dep: Invoke init_module(resource_account)
-    Dep->>FW: resource_account::retrieve_resource_account_cap
-    Dep->>Dep: move_to<DeployCap>(cap)
-    Dep->>Dep: manageable::new(resource_account, sender)
-    Note over Dep: sender becomes initial admin
-```
-
-### 2) Deterministic publish via deployer
-```mermaid
-sequenceDiagram
-    participant Admin
-    participant Dep as package_deployer::deployer
-    participant OCD as object_code_deterministic_deployment::deployment
-    participant Obj as Aptos Object
-    Admin->>Dep: publish_package(seed, metadata, code)
-    Dep->>Dep: deployer_signer(admin) (assert_is_admin + create_signer_with_capability)
-    Dep->>OCD: deterministic_publish(deployer, seed, metadata, code)
-    OCD->>OCD: create_named_object + generate_signer
-    OCD->>Obj: code::publish_package_txn(metadata, code)
-    OCD-->>Admin: Publish event(object_address)
-```
-
-### 3) Upgrade/freeze via seed wrappers
-```mermaid
-flowchart TD
-    A[Admin] --> B["upgrade_package(seed, metadata, code)"]
-    B --> C["deployer_signer(admin)"]
-    C --> D["addr = code_object_address(seed)"]
-    D --> E["address_to_object<PackageRegistry>(addr)"]
-    E --> F["ocd::upgrade(..., code_object)"]
-    F --> G[[Upgrade event]]
-
-    A --> H["freeze_package(seed)"]
-    H --> C
-    C --> D2["addr = code_object_address(seed)"]
-    D2 --> E2["address_to_object<PackageRegistry>(addr)"]
-    E2 --> I["ocd::freeze_code_object(...)"]
-    I --> J[[Freeze event]]
-```
-
-### Account relationships (who owns/controls what)
+## Account relationships (who owns/controls what)
 ```mermaid
 graph LR
   %% Actors
@@ -143,6 +92,58 @@ graph LR
   classDef obj fill:#eef,stroke:#66f,stroke-width:1px;
   classDef res fill:#efe,stroke:#6a6,stroke-width:1px;
 ```
+
+## Deployment diagrams
+
+### 1) Create Deployer via Resource-account publish and init flow
+```mermaid
+sequenceDiagram
+    participant Dev as Developer
+    participant CLI as Aptos CLI
+    participant FW as Aptos Framework
+    participant Dep as package_deployer::deployer
+    Dev->>CLI: aptos move create-resource-account-and-publish-package
+    CLI->>FW: Publish package under resource account
+    FW->>Dep: Invoke init_module(resource_account)
+    Dep->>FW: resource_account::retrieve_resource_account_cap
+    Dep->>Dep: move_to<DeployCap>(cap)
+    Dep->>Dep: manageable::new(resource_account, sender)
+    Note over Dep: sender becomes initial admin
+```
+
+### 2) Deterministic publish via deployer
+```mermaid
+sequenceDiagram
+    participant Admin
+    participant Dep as package_deployer::deployer
+    participant OCD as object_code_deterministic_deployment::deployment
+    participant Obj as Aptos Object
+    Admin->>Dep: publish_package(seed, metadata, code)
+    Dep->>Dep: deployer_signer(admin) (assert_is_admin + create_signer_with_capability)
+    Dep->>OCD: deterministic_publish(deployer, seed, metadata, code)
+    OCD->>OCD: create_named_object + generate_signer
+    OCD->>Obj: code::publish_package_txn(metadata, code)
+    OCD-->>Admin: Publish event(object_address)
+```
+
+### 3) Upgrade/freeze via seed wrappers
+```mermaid
+flowchart TD
+    A[Admin] --> B["upgrade_package(seed, metadata, code)"]
+    B --> C["deployer_signer(admin)"]
+    C --> D["addr = code_object_address(seed)"]
+    D --> E["address_to_object<PackageRegistry>(addr)"]
+    E --> F["ocd::upgrade(..., code_object)"]
+    F --> G[[Upgrade event]]
+
+    A --> H["freeze_package(seed)"]
+    H --> C
+    C --> D2["addr = code_object_address(seed)"]
+    D2 --> E2["address_to_object<PackageRegistry>(addr)"]
+    E2 --> I["ocd::freeze_code_object(...)"]
+    I --> J[[Freeze event]]
+```
+
 
 ## Getting started
 - Requires Aptos CLI and an initialized profile
