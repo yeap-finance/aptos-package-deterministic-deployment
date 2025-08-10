@@ -6,9 +6,12 @@ authors = []
 [addresses]
 
 package_deployer = "_"
+deployer_admin_initial = "_"
 
 [dev-addresses]
 package_deployer = "0x42"
+deployer_admin_initial = "0x43"
+
 object_code_deterministic_deployment = "0x10"
 aptos_extensions = "0x12"
 aptos_extensions_deployer = "0x13"

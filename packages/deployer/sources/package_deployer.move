@@ -43,6 +43,7 @@ module package_deployer::deployer {
     use aptos_framework::account::SignerCapability;
     use aptos_framework::object::{Object};
     use aptos_framework::code::PackageRegistry;
+    use aptos_framework::multisig_account;
     use aptos_framework::resource_account;
     use aptos_framework::transaction_context;
     use aptos_extensions::manageable;
@@ -70,10 +71,10 @@ module package_deployer::deployer {
     /// - If the framework-specific capability retrieval fails (should not occur in the
     ///   intended publish flow)
     fun init_module(resource_account: &signer) {
-        let sender = transaction_context::sender();
-        let resource_account_signer_cap = resource_account::retrieve_resource_account_cap(resource_account, sender);
+        let deployer = @deployer_admin_initial;
+        let resource_account_signer_cap = resource_account::retrieve_resource_account_cap(resource_account, deployer);
         move_to<DeployCap>(resource_account, DeployCap { cap: resource_account_signer_cap });
-        manageable::new(resource_account, sender);
+        manageable::new(resource_account, deployer);
     }
 
     /// Retire the deployer module, removing its admin role and destroying the DeployCap resource.
