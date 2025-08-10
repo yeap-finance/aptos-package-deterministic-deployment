@@ -45,7 +45,7 @@ module proxy::deterministic_proxy {
 
     use aptos_framework::account;
     use aptos_framework::account::{SignerCapability};
-    use proxy::manageable;
+    use aptos_extensions::manageable;
 
     // ===== Constants =====
 

@@ -9,7 +9,7 @@ This package implements a proxy account system that allows users to create deter
 ## Features
 
 - **Deterministic Proxy Creation**: Create resource accounts with predictable addresses using a seed-based approach
-- **Two-Step Admin Transfer**: Secure admin role transfer mechanism inspired by OpenZeppelin's Ownable2Step
+- **Two-Step Admin Transfer**: Secure admin role transfer mechanism (via `aptos_extensions::manageable`)
 - **Resource Account Management**: Efficient management of Aptos resource accounts with signer capabilities
 - **Event-Driven**: Comprehensive event emission for admin role changes and lifecycle management
 
@@ -26,14 +26,14 @@ The core module for creating and managing deterministic proxy accounts.
 
 **Features:**
 - Uses a deterministic seed (`proxy:deterministic_proxy` + custom name) for address generation
-- Automatically sets up admin role management for the created proxy
+- Automatically sets up admin role management for the created proxy (via `aptos_extensions::manageable`)
 - Returns the proxy account address for further interactions
 
-### `manageable`
+### Admin management (via `aptos_extensions::manageable`)
 
-Provides secure admin role management with two-step transfer process.
+Admin role management is provided by the external `aptos_extensions` package, not by a local module in this package.
 
-**Key Functions:**
+**Common Functions:**
 - `new(caller: &signer, admin: address)` - Initialize admin role for a resource
 - `change_admin(caller: &signer, resource_address: address, new_admin: address)` - Start admin transfer
 - `accept_admin(caller: &signer, resource_address: address)` - Complete admin transfer
@@ -43,7 +43,7 @@ Provides secure admin role management with two-step transfer process.
 **Security Features:**
 - Two-step transfer process prevents accidental role transfer to inaccessible addresses
 - Comprehensive access control with proper error handling
-- Event emission for all role changes
+- Event emission for all role changes (from `aptos_extensions::manageable`)
 
 ## Usage
 
@@ -65,7 +65,7 @@ let proxy_signer = deterministic_proxy::generate_proxy_signer(&admin_signer, pro
 ### Managing Admin Roles
 
 ```move
-use proxy::manageable;
+use aptos_extensions::manageable;
 
 // Check current admin
 let current_admin = manageable::admin(proxy_address);
@@ -79,7 +79,7 @@ manageable::accept_admin(&new_admin_signer, proxy_address);
 
 ## Events
 
-The system emits the following events for transparency and monitoring:
+The system emits the following events for transparency and monitoring (via `aptos_extensions::manageable`):
 
 - `AdminChangeStarted` - Emitted when admin transfer is initiated
 - `AdminChanged` - Emitted when admin transfer is completed
@@ -95,6 +95,7 @@ The system emits the following events for transparency and monitoring:
 ## Dependencies
 
 - **Aptos Framework**: Uses `account`, `event`, and standard library modules
+- **aptos_extensions**: Uses `manageable` for two-step admin role management
 - **Move Standard Library**: Utilizes `option`, `signer`, and `vector` modules
 
 ## Building and Testing
@@ -107,7 +108,7 @@ The system emits the following events for transparency and monitoring:
 ### Build
 
 ```bash
-aptos move compile
+aptos move compile --dev
 ```
 
 ### Deploy
@@ -143,7 +144,7 @@ This package is developed by Yeap Labs. Contributions following the established 
 
 ## Version History
 
-- **1.0.0**: Initial release with deterministic proxy creation and manageable admin roles
+- **1.0.0**: Initial release with deterministic proxy creation and admin roles via `aptos_extensions::manageable`
 
 ---
 
