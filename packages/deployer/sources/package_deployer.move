@@ -43,9 +43,7 @@ module package_deployer::deployer {
     use aptos_framework::account::SignerCapability;
     use aptos_framework::object::{Object};
     use aptos_framework::code::PackageRegistry;
-    use aptos_framework::multisig_account;
     use aptos_framework::resource_account;
-    use aptos_framework::transaction_context;
     use aptos_extensions::manageable;
     use object_code_deterministic_deployment::deployment as ocd;
 
