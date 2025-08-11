@@ -42,21 +42,34 @@ Under the resource account address:
 - `PublishPackageCap { cap: SignerCapability }`
 - Manageable admin resource (via `aptos_extensions::manageable`)
 
-## Typical Flows
+## Account Relationships
 
-- First-time deploy
-  1) Caller invokes `deploy(publisher, seed, metadata, code)`.
-  2) Module initializes the resource account if needed and publishes the package.
+```mermaid
+flowchart LR
+    P["Publisher Account (address: P)"]
+    A["Current Admin Account (address: A)"]
+    RA["create_resource_address(P, seed)"]
 
-- Upgrade existing package
-  - If the publisher is an admin of the resource account:
-    1) Call `deploy(publisher, seed, metadata, code)`; it will derive the same `resource_address` and upgrade in-place.
-  - If the publisher is not an admin of the resource account:
-    1) Compute `resource_address = create_resource_address(address_of(publisher), seed)`.
-    2) An admin calls `publish(admin, metadata, code, resource_address)` to upgrade.
+    subgraph RA_STORE["On-chain storage at Resource Account"]
+        CAP["PublishPackageCap { cap: SignerCapability }"]
+        MG["manageable::Admin (mutable admin set)"]
+        PKG["Package (PackageRegistry + modules)"]
+    end
 
-- Freeze management
-  1) Admin calls `freeze_resource_account(admin, resource_address)` to revoke admin and remove the capability.
+    P -- "derives with seed" --> RA
+    P -. "initial admin (on creation)" .-> MG
+    A -- "is current admin" --> MG
+
+    RA --> CAP
+    RA --> MG
+    RA --> PKG
+
+    A -- "calls publish(...) if admin" --> CAP
+    CAP -- "account::create_signer_with_capability" --> RS["Resource Signer"]
+    RS -- "code::publish_package_txn(metadata, code)" --> PKG
+```
+
+Note: A may equal P. If admin changes away from P, deploy(publisher, ...) will fail the admin check; the current admin must call publish(admin, ..., resource_address).
 
 ## Notes
 
