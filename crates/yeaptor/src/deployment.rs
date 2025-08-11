@@ -17,18 +17,18 @@ use crate::config::{YeaptorConfig, load_config, Deployment};
 
 #[derive(Subcommand)]
 pub enum DeploymentTool {
-    BuildPublishPayload(BuildPublishPayload),
+    Build(Build),
 }
 impl DeploymentTool {
     pub async fn execute(self) -> CliResult {
         match self {
-            DeploymentTool::BuildPublishPayload(tool) => tool.execute_serialized().await,
+            DeploymentTool::Build(tool) => tool.execute().await,
         }
     }
 }
 
 #[derive(Parser)]
-pub struct BuildPublishPayload {
+pub struct Build {
     #[clap(flatten)]
     pub(crate) included_artifacts_args: IncludedArtifactsArgs,
     #[clap(flatten)]
@@ -183,9 +183,9 @@ impl YeaptorEnv {
 }
 
 #[async_trait::async_trait]
-impl CliCommand<String> for BuildPublishPayload {
+impl CliCommand<String> for Build {
     fn command_name(&self) -> &'static str {
-        "BuildPublishPayload"
+        "Build"
     }
     async fn execute(self) -> CliTypedResult<String> {
         let cfg = load_config(&self.config)
