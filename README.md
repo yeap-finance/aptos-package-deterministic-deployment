@@ -1,63 +1,144 @@
 # Yeaptor
 
-Yeaptor is a set of Aptos Move packages and lightweight tools to help developers build, deploy, and manage smart contracts on Aptos with predictable addresses and safer upgrade paths.
+Yeaptor provides a small CLI and a Move package that make deterministic, admin‑gated deployments of Move code to Aptos resource accounts straightforward and repeatable.
+
+Core focus in this repository:
+- crates/yeaptor — a CLI that turns a declarative `yeaptor.toml` plan into ready‑to‑run Aptos entry‑function JSON payloads.
+- packages/resource-account-code-deployment — a Move module that deploys/upgrades packages to resource accounts derived from (publisher, seed), with admin control and optional freeze.
 
 ## Highlights
-- Deterministic addresses for code and resource accounts
-- Safer upgrade lifecycle with explicit freeze mechanics
-- Composable, framework-aligned Move patterns
+- Deterministic resource account addresses from (publisher, seed)
+- One‑shot or batch publish/upgrade via entry functions
+- Admin‑gated operations using aptos_extensions::manageable
+- Optional freeze to lock code and revoke management
+- Simple, declarative CLI workflow that outputs JSON payloads for `aptos move run`
 
 ## What’s inside
-- [packages/object-code-deterministic-deployment](packages/object-code-deterministic-deployment/README.md)
-  Deterministically publish Move packages to Aptos Objects, with support for upgrades and freezing, plus a view to pre-compute the object address.
-- [packages/proxy-account](packages/proxy-account/README.md)
-  Create deterministic proxy (resource) accounts with admin-controlled signer generation and a secure two-step admin transfer flow via the accompanying `manageable` module.
-- [packages/resource-account-code-deployment](packages/resource-account-code-deployment/README.md)
-  Deterministically publish/upgrade Move packages to resource accounts derived from (publisher, seed) with admin-gated upgrades and optional freeze.
+- CLI: `crates/yeaptor` (binary name: `yeaptor`)
+- Move package: `packages/resource-account-code-deployment` (module `ra_code_deployment::ra_code_deployment`)
+- Also available (not the focus here):
+  - `packages/object-code-deterministic-deployment`
+  - `packages/proxy-account`
 
-## Why Yeaptor
-- Deterministic addresses: Predict where code or resource accounts will live before deployment (useful for integrations and off-chain references).
-- Controlled upgrades: Upgrade packages deployed to objects, or freeze them to make them immutable.
-- Operational safety: Two-step admin handover for proxies reduces risks from accidental key transfers.
-- Composability: Patterns designed to compose with existing Aptos Framework primitives.
+## How it works
+- You describe deployments in `yeaptor.toml` using logical publisher aliases, a seed, and a list of packages to deploy under the same resource account.
+- The CLI computes the resource account address for each deployment via `create_resource_address(publisher, seed)`.
+- During build, the CLI injects named addresses so each package’s `address_name` resolves to that resource account address.
+- For each package, the CLI emits a JSON payload calling `<yeaptor_address>::ra_code_deployment::deploy(seed, metadata, modules)`.
+- You submit the JSON payloads in order with Aptos CLI.
+
+## Prerequisites
+- Rust toolchain (stable)
+- Aptos CLI installed and configured (profiles, network, etc.)
+
+## Install the CLI
+- From repo root: `cargo install --path crates/yeaptor`
+- Or run without installing: `cargo run -p yeaptor -- <args>`
+
+## Quick start
+1) Bootstrap or reference the `ra_code_deployment` module on‑chain
+   - Either publish `packages/resource-account-code-deployment` once to an address you control, or reuse an existing deployment. Note that the CLI needs this address as `yeaptor_address` to invoke the `deploy`/`batch_deploy` entry functions.
+2) Create `yeaptor.toml`
+   - Start from `yeaptor.toml.example` and set:
+     - `yeaptor_address` to the on‑chain address hosting `ra_code_deployment`.
+     - `[publishers]` mapping for your logical names to addresses.
+     - `[[deployments]]` with a UTF‑8 `seed` and package list.
+3) Generate publish payloads
+   - `yeaptor deployment build --config ./yeaptor.toml --out-dir ./deployments`
+4) Submit payloads in order
+   - `aptos move run --profile <profile> --json-file ./deployments/<n>-<pkg>-publish.json`
+
+## Configuration (yeaptor.toml)
+Keys:
+- format_version: Schema version. Use `1`.
+- yeaptor_address: On‑chain address where `ra_code_deployment` is published.
+- [publishers]: Map of alias -> on‑chain address. Referenced by `deployments.publisher`.
+- [named-addresses] (optional): Extra Move named addresses shared across packages.
+- [[deployments]]: Ordered list. Each defines one resource account derived from `(publisher + seed)` and its ordered packages.
+  - publisher: Alias from `[publishers]` or a literal address string.
+  - seed: UTF‑8 text used to deterministically derive the resource account.
+  - packages: Array of `{ address_name, path }` where:
+    - address_name: Named address used by the package (will resolve to the derived resource account).
+    - path: Filesystem path to the Move package (containing `Move.toml`).
+
+Example:
+```
+format_version = 1
+yeaptor_address = "0x<address-hosting-ra_code_deployment>"
+
+[publishers]
+yeap-multisig = "0x10"
+
+[named-addresses]
+# std = "0x1"
+
+[[deployments]]
+publisher = "yeap-multisig"
+seed = "core-v1"            # UTF-8 only
+packages = [
+  { address_name = "ra_code_deployment", path = "packages/resource-account-code-deployment" },
+  { address_name = "proxy_account",      path = "packages/proxy-account" },
+]
+```
+
+Generated outputs
+- Files are written to `--out-dir` in deployment order: `<index>-<package>-publish.json`.
+- Each file calls:
+```
+{
+  "function_id": "0x<yeaptor_address>::ra_code_deployment::deploy",
+  "type_args": [],
+  "args": [
+    { "type": "hex", "value": "0x<seed-bytes>" },
+    { "type": "hex", "value": "0x<metadata-bcs>" },
+    { "type": "hex", "value": ["0x<module-1>", "0x<module-2>", ...] }
+  ]
+}
+```
+
+Notes
+- Order matters: deployments and the packages within them are processed sequentially.
+- `seed` must be UTF‑8 text (not hex) to ensure consistent resource address derivation.
+- `address_name` must match the named address used in the package’s `Move.toml`.
+- `yeaptor_address` must be the on‑chain address hosting the `ra_code_deployment` module.
+
+## Move module: ra_code_deployment::ra_code_deployment
+Deterministic deployment and upgrade of Move packages to resource accounts using a publisher‑provided seed.
+
+Concepts
+- Deterministic address: `create_resource_address(publisher, seed)`.
+- Admin model: Uses `aptos_extensions::manageable` to gate publish/upgrade to admins.
+- Capability storage: `PublishPackageCap` (stored under the resource account) holds the `SignerCapability` to sign upgrades.
+
+Public entry functions
+- create_resource_account(publisher: &signer, seed: vector<u8>)
+  - Creates the resource account derived from `(publisher, seed)`; aborts if it already exists.
+  - Stores `PublishPackageCap` and initializes manageable admin with `publisher` as admin.
+- deploy(publisher: &signer, seed: vector<u8>, metadata_serialized: vector<u8>, code: vector<vector<u8>>) acquires PublishPackageCap
+  - Ensures the resource account exists, then publishes the package to that resource account (upgrade if already published).
+- batch_deploy(publisher: &signer, seed: vector<u8>, metadatas: vector<vector<u8>>, packages: vector<vector<vector<u8>>>) acquires PublishPackageCap
+  - Ensures the resource account exists, then publishes multiple packages in order.
+- publish(admin: &signer, metadata_serialized: vector<u8>, code: vector<vector<u8>>, resource_address: address) acquires PublishPackageCap
+  - Requires `admin` to be a manageable admin for `resource_address`. Publishes/upgrades using the stored capability.
+- batch_publish(admin: &signer, resource_address: address, metadatas: vector<vector<u8>>, packages: vector<vector<vector<u8>>>) acquires PublishPackageCap
+  - Admin‑gated batch publish to an existing resource account.
+- freeze_resource_account(admin: &signer, resource_address: address) acquires PublishPackageCap
+  - Admin‑gated. Revokes management and removes the stored capability to prevent further publishes/upgrades.
+
+Storage under the resource account
+- PublishPackageCap { cap: SignerCapability }
+- Manageable admin resource (via `aptos_extensions::manageable`)
 
 ## Typical use cases
-- Protocol-owned “factories” and modules at stable, pre-known addresses
-- Managed proxy accounts for automation, custody, or delegated execution
-- Cross-environment coordination where addresses must be known ahead of time
-- Safer lifecycle: upgrade during rollout, freeze when finalized
-
-## 5‑minute quickstart
-1) Prerequisites: Aptos CLI installed and a profile initialized (devnet/testnet/mainnet)
-2) Build the packages (use --dev for local dev addresses):
-   - cd packages/object-code-deterministic-deployment && aptos move compile --dev
-   - cd packages/proxy-account && aptos move compile --dev
-   - cd packages/resource-account-code-deployment && aptos move compile --dev
-3) Explore package READMEs for usage and API details
-   - Object deployment: deterministic publish/upgrade/freeze to objects
-   - Proxy accounts: create/generate admin-gated resource account signers
-   - Resource-account deployment: deterministic publish/upgrade to resource accounts
-
-## Getting started
-- Requires Aptos CLI and an initialized profile
-- Build and test each package separately in `packages/*`
-- See each package’s Move sources and README for details and examples
-
-## Who is this for?
-- Protocol teams needing predictable addresses and controlled rollouts
-- Wallets, custodians, and automation systems managing delegated execution
-- Developers standardizing on modern Aptos object and resource-account patterns
-
-## Roadmap
-- Turnkey scripts/SDK for packaging metadata/code and submitting transactions
-- Example dapps and e2e test flows for testnet/mainnet
-- Optional events and richer views for observability
+- Protocol‑owned modules at a stable, pre‑known address per `(publisher, seed)`
+- Managed admin‑gated upgrades during rollout; freeze when finalized
+- Multi‑package deployments to a shared resource account
 
 ## Project status
-These modules target the Aptos mainnet framework revision defined in each `Move.toml`. Review, testing, and audits are recommended before production use.
+Targets the Aptos mainnet framework specified by each `Move.toml`. Review, testing, and audits are recommended before production use.
 
 ## Contributing
 Issues and PRs are welcome. Please include clear repro steps and tests where possible.
 
 ## License
-Apache-2.0. See `LICENSE`.
+Apache‑2.0. See `LICENSE`.
