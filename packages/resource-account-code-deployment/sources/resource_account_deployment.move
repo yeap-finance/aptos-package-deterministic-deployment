@@ -1,7 +1,7 @@
 /// Module providing deterministic deployment of Move packages to resource accounts.
 ///
 /// This module exposes helper functions to:
-/// - Initialize a deterministic resource account for a publisher and seed (init_resource_account)
+/// - Create a deterministic resource account for a publisher and seed (create_resource_account)
 /// - Publish or upgrade a package under that resource account (publish)
 /// - Idempotently ensure the account exists and publish in one call (deploy)
 module ra_code_deployment::ra_code_deployment {
@@ -16,31 +16,45 @@ module ra_code_deployment::ra_code_deployment {
         cap: SignerCapability
     }
 
-    /// Initialize the resource account for the given `publisher` and `seed` if it does not exist.
+    /// Create the resource account for the given `publisher` and `seed`.
     ///
     /// - Creates the resource account derived from `publisher` and `seed`.
     /// - Stores a `PublishPackageCap` under the resource account for future publishes/upgrades.
     /// - Initializes a manageable admin resource with `publisher` as admin.
     ///
-    /// This function is idempotent and will no-op if the resource account already exists.
-    public fun init_resource_account(publisher: &signer, seed: vector<u8>) {
-        // Create a resource account signer capability for the publisher.
-        let resource_address = create_resource_address(&address_of(publisher), seed);
-        if (!account::exists_at(resource_address)) {
-            let (resource, resource_signer_cap) = account::create_resource_account(publisher, seed);
-            move_to(&resource, PublishPackageCap { cap: resource_signer_cap });
-            manageable::new(&resource, address_of(publisher));
-        }
+    /// Note: This function does not check for prior existence and will abort if the account
+    /// already exists.
+    public fun create_resource_account(publisher: &signer, seed: vector<u8>) {
+        let (resource, resource_signer_cap) = account::create_resource_account(publisher, seed);
+        move_to(&resource, PublishPackageCap { cap: resource_signer_cap });
+        manageable::new(&resource, address_of(publisher));
+    }
+
+    /// Freeze a resource account by revoking management and removing the publish capability.
+    ///
+    /// - Requires `admin` to be an admin of the manageable resource at `resource_address`.
+    /// - Moves out the `PublishPackageCap` from the resource account, preventing future publishes/upgrades.
+    /// - Generates a signer from that capability and calls `manageable::destroy` to remove the
+    ///   manageable admin resource from the resource account.
+    ///
+    /// Effects:
+    /// - After execution, the resource account is no longer manageable via this module and cannot
+    ///   publish or upgrade packages using the removed capability.
+    public fun freeze_resource_account(admin: &signer, resource_address: address) acquires PublishPackageCap {
+        manageable::assert_is_admin(admin, resource_address);
+        let PublishPackageCap {cap} = move_from<PublishPackageCap>(resource_address);
+        let resource_signer = account::create_signer_with_capability(&cap);
+        manageable::destroy(&resource_signer);
     }
 
     /// Deploy a package to a deterministic resource account derived from `publisher` and `seed`.
     ///
-    /// Ensures the resource account exists (via `init_resource_account`) and then publishes the
+    /// Ensures the resource account exists (via `create_resource_account`) and then publishes the
     /// package by calling `publish`.
     public fun deploy(publisher: &signer, seed: vector<u8>, metadata_serialized: vector<u8>, code: vector<vector<u8>>) acquires PublishPackageCap {
         let resource_address = create_resource_address(&address_of(publisher), seed);
         if (!account::exists_at(resource_address)) {
-            init_resource_account(publisher, seed);
+            create_resource_account(publisher, seed);
         };
         publish(publisher, metadata_serialized, code, resource_address);
     }
@@ -56,5 +70,4 @@ module ra_code_deployment::ra_code_deployment {
         let resource_signer = account::create_signer_with_capability(&deploy_cap.cap);
         code::publish_package_txn(&resource_signer, metadata_serialized, code);
     }
-
 }
