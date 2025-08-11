@@ -77,7 +77,7 @@ module ra_code_deployment::ra_code_deployment {
         packages: vector<vector<vector<u8>>>
     ) acquires PublishPackageCap {
         let resource_address = create_resource_address(&address_of(publisher), seed);
-        if (!account::exists_at(resource_address)) {
+        if (!exists<PublishPackageCap>(resource_address)) {
             create_resource_account(publisher, seed);
         };
         batch_publish(publisher, resource_address, metadatas, packages);
