@@ -36,9 +36,8 @@ jemallocator = { version = "0.5.0", features = [
 [patch.crates-io]
 merlin = { git = "https://github.com/aptos-labs/merlin" }
 
-
 [patch."https://github.com/aptos-labs/aptos-core"]
-aptos = { path = "../../../../aptos-labs/aptos-core/crates/aptos" }
-aptos-framework ={ path = "../../../../aptos-labs/aptos-core/aptos-move/framework" }
-aptos-cli-common={ path = "../../../../aptos-labs/aptos-core/crates/aptos-cli-common" }
-aptos-types = { path = "../../../../aptos-labs/aptos-core/types" }
+aptos = { git = "https://github.com/yeap-finance/aptos-core", branch = "mainnet" }
+aptos-framework = { git = "https://github.com/yeap-finance/aptos-core", branch = "mainnet" }
+aptos-cli-common = { git = "https://github.com/yeap-finance/aptos-core", branch = "mainnet" }
+aptos-types = { git = "https://github.com/yeap-finance/aptos-core", branch = "mainnet" }

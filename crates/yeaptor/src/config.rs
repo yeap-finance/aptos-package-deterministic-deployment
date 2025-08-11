@@ -1,9 +1,9 @@
 use anyhow::Result;
 use serde::Deserialize;
-use std::collections::{BTreeMap, HashMap};
+use std::collections::BTreeMap;
 use std::fs;
 use std::path::Path;
-use aptos_types::account_address::{create_resource_address, AccountAddress};
+use aptos_types::account_address::AccountAddress;
 
 #[derive(Deserialize, Debug,Clone)]
 pub struct YeaptorConfig {

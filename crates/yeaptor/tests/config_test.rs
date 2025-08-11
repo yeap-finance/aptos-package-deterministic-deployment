@@ -1,8 +1,7 @@
-use std::collections::BTreeMap;
 use std::fs;
 use std::path::Path;
 use tempfile::NamedTempFile;
-use yeaptor::config::{load_config, YeaptorConfig, Deployment, PackageSpec};
+use yeaptor::config::load_config;
 use aptos_types::account_address::AccountAddress;
 
 #[test]
