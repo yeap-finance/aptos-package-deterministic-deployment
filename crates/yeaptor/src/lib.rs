@@ -1,5 +1,5 @@
-
-mod deployment;
+pub mod deployment;
+pub mod config;
 
 use clap::Parser;
 

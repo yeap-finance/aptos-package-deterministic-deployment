@@ -7,9 +7,10 @@
 #[global_allocator]
 static ALLOC: jemallocator::Jemalloc = jemallocator::Jemalloc;
 
-use aptos::{move_tool, Tool};
+use aptos::{move_tool};
 use clap::Parser;
 use std::{process::exit, time::Duration};
+use yeaptor::YeaptorTool;
 
 fn main() {
     // Register hooks.
@@ -22,7 +23,7 @@ fn main() {
         .unwrap();
 
     // Run the corresponding tool.
-    let result = runtime.block_on(Tool::parse().execute());
+    let result = runtime.block_on(YeaptorTool::parse().execute());
 
     // Shutdown the runtime with a timeout. We do this to make sure that we don't sit
     // here waiting forever waiting for tasks that sometimes don't want to exit on
