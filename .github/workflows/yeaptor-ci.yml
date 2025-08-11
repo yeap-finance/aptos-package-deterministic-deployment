@@ -1,0 +1,37 @@
+name: Yeaptor crate CI
+
+on:
+  pull_request:
+
+jobs:
+  build-and-test:
+    name: Build and test yeaptor (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-14]
+    defaults:
+      run:
+        working-directory: crates/yeaptor
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Rust (stable)
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Install Protoc
+        uses: arduino/setup-protoc@v2
+
+      - name: Cache cargo builds
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: |
+            crates/yeaptor -> target
+
+      - name: Cargo build
+        run: cargo build --locked --verbose
+
+      - name: Cargo test
+        run: cargo test --locked --all-features --verbose
