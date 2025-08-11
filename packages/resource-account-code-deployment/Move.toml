@@ -1,7 +1,8 @@
 [package]
 name = "ra-code-deployment"
 version = "1.0.0"
-authors = []
+authors = ["Yeap Finance Teams"]
+license = "Apache-2.0"
 
 [addresses]
 

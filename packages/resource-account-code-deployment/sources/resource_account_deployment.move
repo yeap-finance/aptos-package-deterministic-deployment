@@ -1,3 +1,6 @@
+// Copyright (c) 2025 yeap-finance
+// SPDX-License-Identifier: Apache-2.0
+
 /// Module providing deterministic deployment of Move packages to resource accounts.
 ///
 /// This module exposes helper functions to:
