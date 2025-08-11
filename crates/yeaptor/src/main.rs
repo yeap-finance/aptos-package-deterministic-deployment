@@ -7,7 +7,7 @@
 #[global_allocator]
 static ALLOC: jemallocator::Jemalloc = jemallocator::Jemalloc;
 
-use aptos::{move_tool};
+use aptos::move_tool;
 use clap::Parser;
 use std::{process::exit, time::Duration};
 use yeaptor::YeaptorTool;
@@ -35,6 +35,6 @@ fn main() {
         Err(inner) => {
             println!("{}", inner);
             exit(1);
-        },
+        }
     }
 }

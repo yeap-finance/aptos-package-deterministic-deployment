@@ -1,11 +1,11 @@
 use anyhow::Result;
+use aptos_types::account_address::AccountAddress;
 use serde::Deserialize;
 use std::collections::BTreeMap;
 use std::fs;
 use std::path::Path;
-use aptos_types::account_address::AccountAddress;
 
-#[derive(Deserialize, Debug,Clone)]
+#[derive(Deserialize, Debug, Clone)]
 pub struct YeaptorConfig {
     pub format_version: u64,
     pub yeaptor_address: AccountAddress,

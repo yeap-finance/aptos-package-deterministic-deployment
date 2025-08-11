@@ -1,8 +1,8 @@
+use aptos_types::account_address::AccountAddress;
 use std::fs;
 use std::path::Path;
 use tempfile::NamedTempFile;
 use yeaptor::config::load_config;
-use aptos_types::account_address::AccountAddress;
 
 #[test]
 fn test_load_valid_config() {
@@ -39,7 +39,10 @@ packages = [
     let config = load_config(temp_file.path()).unwrap();
 
     assert_eq!(config.format_version, 1);
-    assert_eq!(config.yeaptor_address, AccountAddress::from_hex_literal("0x1").unwrap());
+    assert_eq!(
+        config.yeaptor_address,
+        AccountAddress::from_hex_literal("0x1").unwrap()
+    );
 
     // Test publishers
     assert_eq!(config.publishers.len(), 2);
@@ -92,7 +95,10 @@ yeaptor_address = "0x1"
     let config = load_config(temp_file.path()).unwrap();
 
     assert_eq!(config.format_version, 1);
-    assert_eq!(config.yeaptor_address, AccountAddress::from_hex_literal("0x1").unwrap());
+    assert_eq!(
+        config.yeaptor_address,
+        AccountAddress::from_hex_literal("0x1").unwrap()
+    );
     assert_eq!(config.publishers.len(), 0);
     assert_eq!(config.named_addresses.len(), 0);
     assert_eq!(config.deployments.len(), 0);
@@ -112,7 +118,10 @@ yeaptor_address = "0x42"
     let config = load_config(temp_file.path()).unwrap();
 
     assert_eq!(config.format_version, 2);
-    assert_eq!(config.yeaptor_address, AccountAddress::from_hex_literal("0x42").unwrap());
+    assert_eq!(
+        config.yeaptor_address,
+        AccountAddress::from_hex_literal("0x42").unwrap()
+    );
     // Default empty collections should be created
     assert!(config.publishers.is_empty());
     assert!(config.named_addresses.is_empty());
@@ -136,7 +145,10 @@ test-publisher = "0x10"
     let config = load_config(temp_file.path()).unwrap();
 
     assert_eq!(config.format_version, 1);
-    assert_eq!(config.yeaptor_address, AccountAddress::from_hex_literal("0x1").unwrap());
+    assert_eq!(
+        config.yeaptor_address,
+        AccountAddress::from_hex_literal("0x1").unwrap()
+    );
 
     // Publishers section is present
     assert_eq!(config.publishers.len(), 1);
@@ -169,7 +181,10 @@ yeaptor_address = "0x1"
     let config = load_config(temp_file.path()).unwrap();
 
     assert_eq!(config.format_version, 1);
-    assert_eq!(config.yeaptor_address, AccountAddress::from_hex_literal("0x1").unwrap());
+    assert_eq!(
+        config.yeaptor_address,
+        AccountAddress::from_hex_literal("0x1").unwrap()
+    );
     assert_eq!(config.publishers.len(), 0);
     assert_eq!(config.named_addresses.len(), 0);
     assert_eq!(config.deployments.len(), 0);
@@ -255,15 +270,24 @@ test-address = "0x00000000000000000000000000000000000000000000000000000000000000
     assert_eq!(config.format_version, 1);
     assert_eq!(
         config.yeaptor_address,
-        AccountAddress::from_hex_literal("0x0000000000000000000000000000000000000000000000000000000000000001").unwrap()
+        AccountAddress::from_hex_literal(
+            "0x0000000000000000000000000000000000000000000000000000000000000001"
+        )
+        .unwrap()
     );
     assert_eq!(
         config.publishers.get("test-publisher").unwrap(),
-        &AccountAddress::from_hex_literal("0x0000000000000000000000000000000000000000000000000000000000000010").unwrap()
+        &AccountAddress::from_hex_literal(
+            "0x0000000000000000000000000000000000000000000000000000000000000010"
+        )
+        .unwrap()
     );
     assert_eq!(
         config.named_addresses.get("test-address").unwrap(),
-        &AccountAddress::from_hex_literal("0x0000000000000000000000000000000000000000000000000000000000000030").unwrap()
+        &AccountAddress::from_hex_literal(
+            "0x0000000000000000000000000000000000000000000000000000000000000030"
+        )
+        .unwrap()
     );
 }
 #[test]

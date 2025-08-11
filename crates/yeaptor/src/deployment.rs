@@ -3,8 +3,7 @@ use anyhow::{Context, Result, anyhow};
 use aptos::common::transactions::source_package::manifest_parser;
 use aptos::common::transactions::source_package::parsed_manifest::SourceManifest;
 use aptos::common::types::{
-    CliCommand, CliError, CliResult, CliTypedResult,
-    MovePackageOptions, PromptOptions, SaveFile,
+    CliCommand, CliError, CliResult, CliTypedResult, MovePackageOptions, PromptOptions, SaveFile,
 };
 use aptos::move_tool::IncludedArtifactsArgs;
 use aptos_framework::BuiltPackage;
@@ -145,7 +144,10 @@ impl YeaptorEnv {
                 .config
                 .publishers
                 .get(&deployment.publisher)
-                .expect(&format!("Publisher address not found: {}", deployment.publisher))
+                .expect(&format!(
+                    "Publisher address not found: {}",
+                    deployment.publisher
+                ))
                 .clone(),
             seed: deployment.seed.clone(),
             packages,
@@ -163,7 +165,7 @@ impl YeaptorEnv {
             .build_options(move_options)?;
         build_options.install_dir = move_options.output_dir.clone();
         let mut named_addresses = self.named_addresses.clone();
-        named_addresses.extend(build_options.named_addresses.iter().cloned());
+        named_addresses.extend(build_options.named_addresses.clone());
         build_options.named_addresses = named_addresses;
         let pack = BuiltPackage::build(package_dir.to_path_buf(), build_options)
             .map_err(|e| anyhow!("Move compilation error: {:#}", e))?;
