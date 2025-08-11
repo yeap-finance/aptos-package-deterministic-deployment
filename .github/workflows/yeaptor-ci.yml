@@ -22,9 +22,6 @@ jobs:
       - name: Install Rust (stable)
         uses: dtolnay/rust-toolchain@stable
 
-      - name: Install Protoc
-        uses: arduino/setup-protoc@v2
-
       - name: Cache cargo builds
         uses: Swatinem/rust-cache@v2
         with:
