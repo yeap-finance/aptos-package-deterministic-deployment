@@ -79,7 +79,7 @@ impl YeaptorEnv {
                     .map(move |package| (package.address_name.clone(), deployment_address.clone()))
             })
             .collect::<BTreeMap<String, AccountAddress>>();
-        named_addresses.append(&mut (package_addresses.clone()));
+        named_addresses.extend(package_addresses);
 
         // let package_manifests = config
         //     .deployments
