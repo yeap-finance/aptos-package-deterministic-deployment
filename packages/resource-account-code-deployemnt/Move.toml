@@ -1,0 +1,26 @@
+[package]
+name = "ra-code-deployment"
+version = "1.0.0"
+authors = []
+
+[addresses]
+
+ra_code_deployment = "_"
+
+[dev-addresses]
+ra_code_deployment = "0x42"
+
+aptos_extensions = "0x12"
+aptos_extensions_deployer = "0x13"
+
+[dependencies.AptosFramework]
+git = "https://github.com/aptos-labs/aptos-core.git"
+rev = "mainnet"
+subdir = "aptos-move/framework/aptos-framework"
+
+[dependencies.AptosExtensions]
+git = "https://github.com/yeap-finance/stablecoin-aptos.git"
+rev= "master"
+subdir = "./packages/aptos_extensions"
+
+[dev-dependencies]
