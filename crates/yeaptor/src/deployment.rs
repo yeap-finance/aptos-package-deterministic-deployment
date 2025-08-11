@@ -163,7 +163,7 @@ impl YeaptorEnv {
             .build_options(move_options)?;
         build_options.install_dir = move_options.output_dir.clone();
         let mut named_addresses = self.named_addresses.clone();
-        named_addresses.append(&mut (build_options.named_addresses.clone()));
+        named_addresses.extend(build_options.named_addresses.iter().cloned());
         build_options.named_addresses = named_addresses;
         let pack = BuiltPackage::build(package_dir.to_path_buf(), build_options)
             .map_err(|e| anyhow!("Move compilation error: {:#}", e))?;
