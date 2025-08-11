@@ -145,7 +145,7 @@ impl YeaptorEnv {
                 .config
                 .publishers
                 .get(&deployment.publisher)
-                .expect("Publisher address not found")
+                .expect(&format!("Publisher address not found: {}", deployment.publisher))
                 .clone(),
             seed: deployment.seed.clone(),
             packages,
