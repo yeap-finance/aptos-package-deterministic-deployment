@@ -17,14 +17,14 @@ pub struct YeaptorConfig {
     pub deployments: Vec<Deployment>,
 }
 
-#[derive(Deserialize, Debug,Clone)]
+#[derive(Deserialize, Debug, Clone)]
 pub struct Deployment {
     pub publisher: String,
     pub seed: String,
     pub packages: Vec<PackageSpec>,
 }
 
-#[derive(Deserialize, Debug,Clone)]
+#[derive(Deserialize, Debug, Clone)]
 pub struct PackageSpec {
     pub address_name: String,
     pub path: String,
