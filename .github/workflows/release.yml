@@ -1,0 +1,100 @@
+name: Release yeaptor
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Tag to release (e.g., v1.2.3)"
+        required: true
+      name:
+        description: "Release title (optional)"
+        required: false
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Build release binaries (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-14]
+    defaults:
+      run:
+        working-directory: crates/yeaptor
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Rust (stable)
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache cargo builds
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: |
+            crates/yeaptor -> target
+
+      - name: Build (release)
+        run: cargo build --release --locked --verbose
+
+      - name: Prepare artifact
+        shell: bash
+        run: |
+          mkdir -p dist
+          # Create OS/arch aware name
+          echo "ARCH=$RUNNER_ARCH" >> $GITHUB_ENV
+          ARTIFACT="yeaptor-${{ matrix.os }}-${RUNNER_ARCH}"
+          cp target/release/yeaptor "dist/${ARTIFACT}"
+          echo "ARTIFACT=${ARTIFACT}" >> $GITHUB_ENV
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.ARTIFACT }}
+          path: crates/yeaptor/dist/${{ env.ARTIFACT }}
+          if-no-files-found: error
+
+  release:
+    name: Create GitHub Release
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: yeaptor-*
+          merge-multiple: true
+          path: dist
+
+      - name: List artifacts
+        run: ls -alh dist
+
+      - name: Ensure tag provided for manual runs
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          if [ -z "${{ inputs.tag }}" ]; then
+            echo "Input 'tag' is required for workflow_dispatch"; exit 1; fi
+
+      - name: Create release (tag push)
+        if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/*
+          draft: false
+          prerelease: false
+
+      - name: Create release (manual)
+        if: github.event_name == 'workflow_dispatch'
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/*
+          tag_name: ${{ inputs.tag }}
+          name: ${{ inputs.name }}
+          draft: false
+          prerelease: false

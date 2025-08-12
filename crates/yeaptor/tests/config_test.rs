@@ -2,7 +2,7 @@ use aptos_types::account_address::AccountAddress;
 use std::fs;
 use std::path::Path;
 use tempfile::NamedTempFile;
-use yeaptor::config::load_config;
+use yeaptor::config::{load_config, IncludedArtifacts};
 
 #[test]
 fn test_load_valid_config() {
@@ -22,14 +22,14 @@ publisher = "test-publisher"
 seed = "test-seed"
 packages = [
     { address_name = "test_package", path = "packages/test" },
-    { address_name = "another_package", path = "packages/another" },
+    { address_name = "another_package", path = "packages/another", include_artifacts = "all" },
 ]
 
 [[deployments]]
 publisher = "another-publisher"
 seed = "another-seed"
 packages = [
-    { address_name = "third_package", path = "packages/third" },
+    { address_name = "third_package", path = "packages/third", include_artifacts = "none" },
 ]
 "#;
 
@@ -39,10 +39,7 @@ packages = [
     let config = load_config(temp_file.path()).unwrap();
 
     assert_eq!(config.format_version, 1);
-    assert_eq!(
-        config.yeaptor_address,
-        AccountAddress::from_hex_literal("0x1").unwrap()
-    );
+    assert_eq!(config.yeaptor_address, AccountAddress::from_hex_literal("0x1").unwrap());
 
     // Test publishers
     assert_eq!(config.publishers.len(), 2);
@@ -71,8 +68,10 @@ packages = [
     assert_eq!(first_deployment.packages.len(), 2);
     assert_eq!(first_deployment.packages[0].address_name, "test_package");
     assert_eq!(first_deployment.packages[0].path, "packages/test");
+    assert!(first_deployment.packages[0].include_artifacts.is_none()); // not specified, so None
     assert_eq!(first_deployment.packages[1].address_name, "another_package");
     assert_eq!(first_deployment.packages[1].path, "packages/another");
+    assert_eq!(first_deployment.packages[1].include_artifacts.as_ref().map(|a| a.to_string()), Some("all".to_string())); // explicitly set
 
     let second_deployment = &config.deployments[1];
     assert_eq!(second_deployment.publisher, "another-publisher");
@@ -80,6 +79,7 @@ packages = [
     assert_eq!(second_deployment.packages.len(), 1);
     assert_eq!(second_deployment.packages[0].address_name, "third_package");
     assert_eq!(second_deployment.packages[0].path, "packages/third");
+    assert_eq!(second_deployment.packages[0].include_artifacts.as_ref().map(|a| a.to_string()), Some("none".to_string())); // explicitly set to none
 }
 
 #[test]
@@ -290,6 +290,7 @@ test-address = "0x00000000000000000000000000000000000000000000000000000000000000
         .unwrap()
     );
 }
+
 #[test]
 fn test_config_serialization_format() {
     // Test that the config structure matches expected TOML format
@@ -338,4 +339,104 @@ packages = [
 
     let named_address_keys: Vec<&String> = config.named_addresses.keys().collect();
     assert_eq!(named_address_keys, vec!["addr1", "addr2"]);
+}
+
+#[test]
+fn test_package_include_artifacts_defaults() {
+    // Test that include_artifacts defaults to None when not specified
+    let config_content = r#"
+format_version = 1
+yeaptor_address = "0x1"
+
+[[deployments]]
+publisher = "test-publisher"
+seed = "test-seed"
+packages = [
+    { address_name = "default_package", path = "packages/default" },
+]
+"#;
+
+    let temp_file = NamedTempFile::new().unwrap();
+    fs::write(temp_file.path(), config_content).unwrap();
+
+    let config = load_config(temp_file.path()).unwrap();
+
+    assert_eq!(config.deployments.len(), 1);
+    assert_eq!(config.deployments[0].packages.len(), 1);
+
+    let package = &config.deployments[0].packages[0];
+    assert_eq!(package.address_name, "default_package");
+    assert_eq!(package.path, "packages/default");
+    assert!(package.include_artifacts.is_none()); // Should default to None when not specified
+}
+
+#[test]
+fn test_package_include_artifacts_explicit_values() {
+    // Test explicit values for include_artifacts
+    let config_content = r#"
+format_version = 1
+yeaptor_address = "0x1"
+
+[[deployments]]
+publisher = "test-publisher"
+seed = "test-seed"
+packages = [
+    { address_name = "artifacts_all", path = "packages/all", include_artifacts = "all" },
+    { address_name = "artifacts_sparse", path = "packages/sparse", include_artifacts = "sparse" },
+    { address_name = "artifacts_none", path = "packages/none", include_artifacts = "none" },
+    { address_name = "artifacts_default", path = "packages/default" },
+]
+"#;
+
+    let temp_file = NamedTempFile::new().unwrap();
+    fs::write(temp_file.path(), config_content).unwrap();
+
+    let config = load_config(temp_file.path()).unwrap();
+
+    assert_eq!(config.deployments.len(), 1);
+    assert_eq!(config.deployments[0].packages.len(), 4);
+
+    let packages = &config.deployments[0].packages;
+
+    // Test explicit all
+    assert_eq!(packages[0].address_name, "artifacts_all");
+    assert_eq!(packages[0].include_artifacts.as_ref().map(|a| a.to_string()), Some("all".to_string()));
+
+    // Test explicit sparse
+    assert_eq!(packages[1].address_name, "artifacts_sparse");
+    assert_eq!(packages[1].include_artifacts.as_ref().map(|a| a.to_string()), Some("sparse".to_string()));
+
+    // Test explicit none
+    assert_eq!(packages[2].address_name, "artifacts_none");
+    assert_eq!(packages[2].include_artifacts.as_ref().map(|a| a.to_string()), Some("none".to_string()));
+
+    // Test default (should be None when not specified)
+    assert_eq!(packages[3].address_name, "artifacts_default");
+    assert!(packages[3].include_artifacts.is_none());
+}
+
+#[test]
+fn test_invalid_include_artifacts_value() {
+    // Test that invalid include_artifacts values cause parsing errors
+    let config_content = r#"
+format_version = 1
+yeaptor_address = "0x1"
+
+[[deployments]]
+publisher = "test-publisher"
+seed = "test-seed"
+packages = [
+    { address_name = "invalid_package", path = "packages/invalid", include_artifacts = "invalid" },
+]
+"#;
+
+    let temp_file = NamedTempFile::new().unwrap();
+    fs::write(temp_file.path(), config_content).unwrap();
+
+    let result = load_config(temp_file.path());
+    assert!(result.is_err());
+
+    // Verify the error message contains information about the invalid value
+    let error_msg = result.unwrap_err().to_string();
+    assert!(error_msg.contains("invalid") || error_msg.contains("Invalid"));
 }

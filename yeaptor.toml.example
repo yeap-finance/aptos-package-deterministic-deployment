@@ -3,8 +3,8 @@
 # This file declares:
 # - publisher aliases and their on-chain addresses
 # - deployments: an ordered array; each item maps to a single resource account, defined by
-#   (publisher + seed), and contains its own ordered list of packages to deploy. Each package is
-#   an object with { address_name, path }.
+#   (publisher + seed), and contains its own ordered list of packages to deploy. Each deployment
+#   can be configured with batch_mode, and each package is an object with { address_name, path, include_artifacts? }.
 #
 # Ordering:
 # - Deployments: processed in the order they appear in [[deployments]].
@@ -12,6 +12,16 @@
 #
 # Packages listed under the same deployment are deployed to the same resource account
 # derived from (publisher address, seed).
+#
+# Deployment fields:
+# - publisher: Publisher alias or on-chain address
+# - seed: UTF-8 seed for resource account derivation
+# - packages: Array of packages to deploy
+#
+# Package fields:
+# - address_name: Name for the package address in the deployment
+# - path: Path to the Move package directory
+# - include_artifacts: Optional artifacts to include ("none", "sparse", "all" - defaults to "sparse")
 
 format_version = 1
 yeaptor_address = "0x73e9493b936d55c91608478bdf57e4004126720d64e914b572df9f927b07e3dc"
@@ -23,22 +33,25 @@ yeap-multisig = "0x10"
 # dependencies addresses
 
 
-# Deployment 1
+# Deployment 1: core stack (sequential mode - default)
 [[deployments]]
 # Provide seed as UTF-8 text or hex (0x...).
 publisher = "yeap-multisig"
 seed = "core-v1"
 
 packages = [
+    # Package without include_artifacts (defaults to "sparse")
     { address_name = "ra_code_deployment", path = "packages/resource-account-code-deployment" },
-    { address_name = "proxy_account", path = "packages/proxy-account" },
+    # Package with explicit include_artifacts = "sparse"
+    { address_name = "proxy_account", path = "packages/proxy-account", include_artifacts = "sparse" },
 ]
 
-# Deployment 2
+# Deployment 2: payments stack (batch mode enabled)
 [[deployments]]
 publisher = "yeap-multisig"
 seed = "payments-v1"
 packages = [
+    # Example with explicit include_artifacts = "all"
+    # { address_name = "payments", path = "packages/payments", include_artifacts = "all" },
 ]
 # Place entries in desired order; no explicit dependency keywords are supported.
-
