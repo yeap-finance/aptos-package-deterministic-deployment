@@ -117,10 +117,6 @@ impl YeaptorEnv {
             .iter()
             .map(|pkg| {
                 let pkg_path = Path::new(&pkg.path);
-                let included_artifacts = if let Some(artifacts) = &pkg.include_artifacts {
-                    artifacts
-                } else {
-                    &included_args.included_artifacts
                 let included_artifacts = pkg.include_artifacts.as_ref().unwrap_or(&included_args.included_artifacts);
                 let (pkg_name, metadata_serialized, modules) = self
                     .build_package(pkg_path, included_artifacts, move_options)
