@@ -5,7 +5,7 @@ use aptos::common::transactions::source_package::parsed_manifest::SourceManifest
 use aptos::common::types::{
     CliCommand, CliError, CliResult, CliTypedResult, MovePackageOptions, PromptOptions, SaveFile,
 };
-use aptos::move_tool::IncludedArtifactsArgs;
+use aptos::move_tool::{IncludedArtifacts, IncludedArtifactsArgs};
 use aptos_framework::BuiltPackage;
 use aptos_types::account_address::{AccountAddress, create_resource_address};
 use clap::{Parser, Subcommand};
@@ -47,7 +47,6 @@ pub struct Build {
 struct YeaptorEnv {
     config: YeaptorConfig,
     named_addresses: BTreeMap<String, AccountAddress>,
-    // package_addresses: BTreeMap<String, AccountAddress>,
 }
 
 #[derive(Debug, Clone)]
@@ -80,23 +79,9 @@ impl YeaptorEnv {
             .collect::<BTreeMap<String, AccountAddress>>();
         named_addresses.extend(package_addresses);
 
-        // let package_manifests = config
-        //     .deployments
-        //     .iter()
-        //     .flat_map(|de| {
-        //         de.packages.iter().map(|pkg| {
-        //             let pkg_path = Path::new(&pkg.path);
-        //             let manifest =
-        //                 read_package_manifest(&pkg_path).expect("Failed to parse package manifest");
-        //             (pkg.address_name.clone(), manifest)
-        //         })
-        //     })
-        //     .collect::<BTreeMap<String, SourceManifest>>();
-
         Self {
             config,
             named_addresses,
-            // package_addresses,
         }
     }
     pub fn config(&self) -> &YeaptorConfig {
@@ -132,8 +117,9 @@ impl YeaptorEnv {
             .iter()
             .map(|pkg| {
                 let pkg_path = Path::new(&pkg.path);
+                let included_artifacts = pkg.include_artifacts.as_ref().unwrap_or(&included_args.included_artifacts);
                 let (pkg_name, metadata_serialized, modules) = self
-                    .build_package(pkg_path, included_args, move_options)
+                    .build_package(pkg_path, included_artifacts, move_options)
                     .expect("Failed to build package");
 
                 (pkg_name, metadata_serialized, modules)
@@ -157,12 +143,11 @@ impl YeaptorEnv {
     fn build_package(
         &self,
         package_dir: &Path,
-        included_args: &IncludedArtifactsArgs,
+        included_args: &IncludedArtifacts,
         move_options: &MovePackageOptions,
     ) -> CliTypedResult<(String, Vec<u8>, Vec<Vec<u8>>)> {
-        let mut build_options = included_args
-            .included_artifacts
-            .build_options(move_options)?;
+        let mut build_options =
+            included_args.build_options(move_options)?;
         build_options.install_dir = move_options.output_dir.clone();
         let mut named_addresses = self.named_addresses.clone();
         named_addresses.extend(build_options.named_addresses.clone());
@@ -201,6 +186,7 @@ impl CliCommand<String> for Build {
 
         let mut written = 0usize;
         let env = YeaptorEnv::new(cfg);
+
         let built_deployments = env
             .build_all(&self.included_artifacts_args, &self.move_options)
             .with_context(|| "failed to build all deployments")?;
@@ -229,6 +215,19 @@ impl CliCommand<String> for Build {
                 written += 1;
             }
         }
+
+        // Write resolved named addresses to a TOML file at the end
+        let addresses_path = self.out_dir.join("addresses.toml");
+        let mut addresses_toml = String::from("[addresses]\n");
+        for (name, addr) in env.named_addresses().iter() {
+            addresses_toml.push_str(&format!("{} = \"{}\"\n", name, addr.to_standard_string()));
+        }
+        fs::write(&addresses_path, addresses_toml).with_context(|| {
+            format!(
+                "failed to write addresses file {}",
+                addresses_path.display()
+            )
+        })?;
 
         Ok(format!(
             "Wrote {} publish payload JSON files to {}",
