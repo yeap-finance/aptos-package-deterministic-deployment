@@ -10,7 +10,7 @@ aptos = { git = "https://github.com/aptos-labs/aptos-core", branch = "mainnet" }
 aptos-cli-common = { git = "https://github.com/aptos-labs/aptos-core", branch = "mainnet" }
 aptos-types = { git = "https://github.com/aptos-labs/aptos-core", branch = "mainnet" }
 aptos-framework = { git = "https://github.com/aptos-labs/aptos-core", branch = "mainnet" }
-
+move-binary-format = { git = "https://github.com/aptos-labs/aptos-core", branch = "mainnet" }
 clap = { version = "=4.5.31", features = ["derive"] }
 tokio = { version = "=1.43", features = ["full"] }
 # fix the version to avoid breaking changes
@@ -23,9 +23,11 @@ anyhow = "1.0.98"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 serde_with = {version = "3.12.0"}
+serde_yaml = "=0.9.33"
 toml = "0.8"
 hex = "0.4"
 async-trait = "0.1.88"
+csv = "1.3"
 
 [dev-dependencies]
 tempfile = "3.0"
@@ -43,6 +45,7 @@ aptos = { git = "https://github.com/yeap-finance/aptos-core", branch = "mainnet"
 aptos-framework = { git = "https://github.com/yeap-finance/aptos-core", branch = "mainnet" }
 aptos-cli-common = { git = "https://github.com/yeap-finance/aptos-core", branch = "mainnet" }
 aptos-types = { git = "https://github.com/yeap-finance/aptos-core", branch = "mainnet" }
+move-binary-format = { git = "https://github.com/yeap-finance/aptos-core", branch = "mainnet" }
 
 [build-dependencies]
 chrono = { version = "0.4", default-features = false, features = ["clock"] }

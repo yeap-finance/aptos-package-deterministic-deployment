@@ -2,7 +2,7 @@ use aptos_types::account_address::AccountAddress;
 use std::fs;
 use std::path::Path;
 use tempfile::NamedTempFile;
-use yeaptor::config::{load_config, IncludedArtifacts};
+use yeaptor::config::load_config;
 
 #[test]
 fn test_load_valid_config() {
@@ -39,7 +39,10 @@ packages = [
     let config = load_config(temp_file.path()).unwrap();
 
     assert_eq!(config.format_version, 1);
-    assert_eq!(config.yeaptor_address, AccountAddress::from_hex_literal("0x1").unwrap());
+    assert_eq!(
+        config.yeaptor_address,
+        AccountAddress::from_hex_literal("0x1").unwrap()
+    );
 
     // Test publishers
     assert_eq!(config.publishers.len(), 2);
@@ -67,19 +70,40 @@ packages = [
     assert_eq!(first_deployment.seed, "test-seed");
     assert_eq!(first_deployment.packages.len(), 2);
     assert_eq!(first_deployment.packages[0].address_name, "test_package");
-    assert_eq!(first_deployment.packages[0].path, "packages/test");
+    assert_eq!(
+        first_deployment.packages[0].path,
+        Path::new("packages/test")
+    );
     assert!(first_deployment.packages[0].include_artifacts.is_none()); // not specified, so None
     assert_eq!(first_deployment.packages[1].address_name, "another_package");
-    assert_eq!(first_deployment.packages[1].path, "packages/another");
-    assert_eq!(first_deployment.packages[1].include_artifacts.as_ref().map(|a| a.to_string()), Some("all".to_string())); // explicitly set
+    assert_eq!(
+        first_deployment.packages[1].path,
+        Path::new("packages/another")
+    );
+    assert_eq!(
+        first_deployment.packages[1]
+            .include_artifacts
+            .as_ref()
+            .map(|a| a.to_string()),
+        Some("all".to_string())
+    ); // explicitly set
 
     let second_deployment = &config.deployments[1];
     assert_eq!(second_deployment.publisher, "another-publisher");
     assert_eq!(second_deployment.seed, "another-seed");
     assert_eq!(second_deployment.packages.len(), 1);
     assert_eq!(second_deployment.packages[0].address_name, "third_package");
-    assert_eq!(second_deployment.packages[0].path, "packages/third");
-    assert_eq!(second_deployment.packages[0].include_artifacts.as_ref().map(|a| a.to_string()), Some("none".to_string())); // explicitly set to none
+    assert_eq!(
+        second_deployment.packages[0].path,
+        Path::new("packages/third")
+    );
+    assert_eq!(
+        second_deployment.packages[0]
+            .include_artifacts
+            .as_ref()
+            .map(|a| a.to_string()),
+        Some("none".to_string())
+    ); // explicitly set to none
 }
 
 #[test]
@@ -366,7 +390,7 @@ packages = [
 
     let package = &config.deployments[0].packages[0];
     assert_eq!(package.address_name, "default_package");
-    assert_eq!(package.path, "packages/default");
+    assert_eq!(package.path, Path::new("packages/default"));
     assert!(package.include_artifacts.is_none()); // Should default to None when not specified
 }
 
@@ -400,15 +424,33 @@ packages = [
 
     // Test explicit all
     assert_eq!(packages[0].address_name, "artifacts_all");
-    assert_eq!(packages[0].include_artifacts.as_ref().map(|a| a.to_string()), Some("all".to_string()));
+    assert_eq!(
+        packages[0]
+            .include_artifacts
+            .as_ref()
+            .map(|a| a.to_string()),
+        Some("all".to_string())
+    );
 
     // Test explicit sparse
     assert_eq!(packages[1].address_name, "artifacts_sparse");
-    assert_eq!(packages[1].include_artifacts.as_ref().map(|a| a.to_string()), Some("sparse".to_string()));
+    assert_eq!(
+        packages[1]
+            .include_artifacts
+            .as_ref()
+            .map(|a| a.to_string()),
+        Some("sparse".to_string())
+    );
 
     // Test explicit none
     assert_eq!(packages[2].address_name, "artifacts_none");
-    assert_eq!(packages[2].include_artifacts.as_ref().map(|a| a.to_string()), Some("none".to_string()));
+    assert_eq!(
+        packages[2]
+            .include_artifacts
+            .as_ref()
+            .map(|a| a.to_string()),
+        Some("none".to_string())
+    );
 
     // Test default (should be None when not specified)
     assert_eq!(packages[3].address_name, "artifacts_default");

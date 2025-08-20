@@ -8,7 +8,13 @@ fn main() {
         .args(["describe", "--tags", "--always", "--dirty", "--broken"])
         .output()
         .ok()
-        .and_then(|o| if o.status.success() { Some(String::from_utf8_lossy(&o.stdout).trim().to_string()) } else { None });
+        .and_then(|o| {
+            if o.status.success() {
+                Some(String::from_utf8_lossy(&o.stdout).trim().to_string())
+            } else {
+                None
+            }
+        });
 
     if let Some(desc) = git_describe {
         println!("cargo:rustc-env=GIT_DESCRIBE={}", desc);
