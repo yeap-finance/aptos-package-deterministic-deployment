@@ -105,7 +105,7 @@ pub fn generate_processor_config(
 
         let mapped_tables = mapped_tables.unwrap();
         let mut event_fields = BTreeMap::new();
-        for (field_name, field_type) in &event_definition.fields {
+        for (field_name, _field_type) in &event_definition.fields {
             let mut column_targets = vec![];
             for mapped_table in mapped_tables {
                 let table_schema = table_schemas.get(mapped_table).ok_or(anyhow!(format!(
@@ -169,7 +169,7 @@ pub fn generate_processor_config(
                         .get(mapped_table)
                         .unwrap()
                         .iter()
-                        .find(|(column_name, column_spec)| {
+                        .find(|(_column_name, column_spec)| {
                             column_spec.column_type.r#type == EVENT_METADATA
                                 && column_spec.column_type.column_type == key
                         })
@@ -210,7 +210,7 @@ pub fn generate_processor_config(
             .filter_map(|(table_name, schema)| {
                 schema
                     .iter()
-                    .find(|(column_name, column_spec)| {
+                    .find(|(_column_name, column_spec)| {
                         &column_spec.column_type.r#type == TRANSACTION_METADATA
                             && &column_spec.column_type.column_type == key
                     })
@@ -237,7 +237,7 @@ pub fn generate_processor_config(
             .filter_map(|(table_name, schema)| {
                 schema
                     .iter()
-                    .find(|(column_name, column_spec)| {
+                    .find(|(_column_name, column_spec)| {
                         &column_spec.column_type.r#type == EVENT_METADATA
                             && &column_spec.column_type.column_type == key
                     })

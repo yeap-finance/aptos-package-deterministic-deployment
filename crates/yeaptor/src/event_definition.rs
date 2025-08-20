@@ -1,6 +1,7 @@
 use aptos_types::account_address::AccountAddress;
 use aptos_types::vm::module_metadata::RuntimeModuleMetadataV1;
 use move_binary_format::CompiledModule;
+#[allow(deprecated)]
 use move_binary_format::normalized::Module;
 use serde::{Deserialize, Serialize};
 use std::collections::{BTreeMap, HashSet};

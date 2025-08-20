@@ -1,9 +1,7 @@
 use crate::config::load_config;
 use crate::env::{BuiltDeployment, YeaptorEnv};
 use crate::tools::event::build_event_definition;
-use anyhow::{Context, Result};
-use aptos::common::transactions::source_package::manifest_parser;
-use aptos::common::transactions::source_package::parsed_manifest::SourceManifest;
+use anyhow::Context;
 use aptos::common::types::{
     CliCommand, CliError, CliResult, CliTypedResult, MovePackageOptions, PromptOptions, SaveFile,
 };
@@ -12,9 +10,10 @@ use aptos_types::account_address::AccountAddress;
 use clap::{Parser, Subcommand};
 use serde_json::json;
 use std::fs;
-use std::path::{Path, PathBuf};
+use std::path::PathBuf;
 
 #[derive(Subcommand)]
+/// Build publish payload JSON files and optionally event definition files from yeaptor.toml deployments
 pub enum DeploymentTool {
     Build(Build),
 }
@@ -27,6 +26,7 @@ impl DeploymentTool {
 }
 
 #[derive(Parser)]
+/// Build publish payloads for Move packages defined in yeaptor.toml; optionally include event definitions
 pub struct Build {
     #[clap(flatten)]
     pub(crate) included_artifacts_args: IncludedArtifactsArgs,
@@ -185,25 +185,16 @@ impl CliCommand<String> for Build {
     }
 }
 
-fn read_package_manifest(package_dir: &Path) -> Result<SourceManifest> {
-    Ok(
-        manifest_parser::parse_move_manifest_from_file(package_dir).with_context(|| {
-            format!(
-                "failed to parse package manifest at {}",
-                package_dir.display()
-            )
-        })?,
-    )
-}
-
-#[inline]
-fn read_package_name(package_dir: &Path) -> Result<String> {
-    Ok(read_package_manifest(package_dir)?
-        .package
-        .name
-        .as_str()
-        .to_string())
-}
+// fn read_package_manifest(package_dir: &Path) -> Result<SourceManifest> {
+//     Ok(
+//         manifest_parser::parse_move_manifest_from_file(package_dir).with_context(|| {
+//             format!(
+//                 "failed to parse package manifest at {}",
+//                 package_dir.display()
+//             )
+//         })?,
+//     )
+// }
 
 fn make_publish_payload_json(
     ra_code_deployment_address: AccountAddress,

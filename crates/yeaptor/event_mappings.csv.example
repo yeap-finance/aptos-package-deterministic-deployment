@@ -1,0 +1,85 @@
+event                                                                         , table
+yeap-earn-api::earn_api::VaultUserOperationEvent                              , earn_user_operations
+yeap-borrow-protocol-common::market::MarketCreatedEvent                       , borrow_market
+yeap-borrow-protocol-common::market::MarketCreatedEvent::collateral_asset, borrow_market::collateral
+yeap-borrow-protocol-common::market::MarketCreatedEvent::collateral_risk_factor, borrow_market::crf
+yeap-borrow-protocol-common::market::MarketStatusChangedEvent                 , borrow_market
+yeap-borrow-protocol-common::claimable_token_config::TokenClaimableEvent      , claimable_token_config
+yeap-borrow-protocol-common::market::BorrowVaultRiskWeightChangedEvent        , borrow_risk_parameters_current
+yeap-borrow-protocol-common::market::MarketMaxBorrowableVaultsChangedEvent    , borrow_market
+yeap-borrow-protocol-common::market::MarketCrfChangedEvent                , borrow_market
+yeap-borrow-protocol-common::market::MarketLiquidationBonusBpsChangedEvent, borrow_market
+yeap-borrow-protocol-common::market::MarketLltvChangedEvent               , borrow_market
+yeap-borrow-protocol-common::market::MarketLtvChangedEvent                , borrow_market
+yeap-borrow-protocol-common::market::MarketOracleChangedEvent             , borrow_market
+yeap-hyperion-llp-protocol::events::LiquidationEvent                          , hyperion_llp_liquidation_activities
+yeap-hyperion-llp-protocol::events::PositionBadDebtEvent                      , hyperion_llp_bad_debt_activities
+yeap-hyperion-llp-protocol::events::PositionCollateralUpdatedEvent            , hyperion_llp_position_current
+yeap-hyperion-llp-protocol::events::PositionCreatedEvent                      , hyperion_llp_position_current
+yeap-hyperion-llp-protocol::events::PositionDebtStatusChangedEvent            , hyperion_llp_debt_status_activities
+yeap-hyperion-llp-protocol::events::PositionDebtStatusChangedEvent            , hyperion_llp_position_debt_stores
+yeap-hyperion-llp-protocol::events::PositionDestroyedEvent                    , hyperion_llp_position_current
+yeap-irm::adaptive_irm::ConfigChangedEvent                                    , adaptive_irm_activities
+yeap-irm::adaptive_irm::ConfigChangedEvent                                    , adaptive_irm_current_config
+yeap-irm::adaptive_irm::StateChangedEvent                                     , adaptive_irm_current_state
+yeap-irm::adaptive_irm::StateChangedEvent                                     , adaptive_irm_state_activities
+yeap-irm::fixed_rate_irm::ConfigChangedEvent                                  , fixed_rate_irm_activities
+yeap-irm::fixed_rate_irm::ConfigChangedEvent                                  , fixed_rate_irm_current_config
+yeap-irm::kinked_irm::ConfigChangedEvent                                      , kinked_irm_activities
+yeap-irm::kinked_irm::ConfigChangedEvent                                      , kinked_irm_current_config
+yeap-oracle::fixed_price_oracle::ConfigChangedEvent                           , fixed_price_oracle_activities
+yeap-oracle::fixed_price_oracle::ConfigChangedEvent                           , fixed_price_oracle_current_config
+yeap-oracle::oracle_router::OracleChangedEvent                                , oracle_router_activities
+yeap-oracle::oracle_router::OracleChangedEvent                                , oracle_router_current_config
+yeap-oracle::pyth_oracle::ConfigChangedEvent                                  , pyth_oracle_activities
+yeap-oracle::pyth_oracle::ConfigChangedEvent                                  , pyth_oracle_current_config
+yeap-oracle::switchboard_oracle::ConfigChangedEvent                           , switchboard_oracle_activities
+yeap-oracle::switchboard_oracle::ConfigChangedEvent                           , switchboard_oracle_current_config
+yeap-scmd-protocol::events::LiquidationEvent                                  , scmd_liquidation_activities
+yeap-scmd-protocol::events::PositionBadDebtEvent                              , scmd_bad_debt_activities
+yeap-scmd-protocol::events::PositionCreatedEvent                              , scmd_position_current
+yeap-scmd-protocol::events::PositionDebtStatusChangedEvent                    , scmd_debt_status_activities
+yeap-scmd-protocol::events::PositionDebtStatusChangedEvent                    , scmd_position_debt_stores
+yeap-scmd-protocol::events::PositionDestroyedEvent                            , scmd_position_current
+yeap-vault::auto_socialize_debt_setting::AutoSocializeDebtStatusChangedEvent  , vault_settings
+yeap-vault::auto_socialize_debt_setting::AutoSocializeDebtStatusChangedEvent::enabled, vault_settings::auto_socialize_debt_enabled
+yeap-vault::emergency_setting::EmergencyWithdrawStatusEvent                   , vault_settings
+yeap-vault::emergency_setting::EmergencyWithdrawStatusEvent::enabled, vault_settings::emergency_withdraw_enabled
+yeap-vault::fee_setting::FeeSettingCreatedEvent                               , vault_settings
+yeap-vault::fee_setting::FeeSettingCreatedEvent::fee_store, vault_settings::fee_store_address
+yeap-vault::fee_setting::FeeSettingCreatedEvent::interest_fee, vault_settings::interest_fee_rate
+
+yeap-vault::fee_setting::FeeStoreChangedEvent                                 , vault_settings
+yeap-vault::fee_setting::FeeStoreChangedEvent::new_fee_store, vault_settings::fee_store_address
+yeap-vault::fee_setting::FeeUpdateEvent                                       , vault_settings
+yeap-vault::fee_setting::FeeUpdateEvent::new_interest_fee, vault_settings::interest_fee_rate
+yeap-vault::flashloan_setting::FlashloanSettingChangedEvent                   , vault_settings
+yeap-vault::flashloan_setting::FlashloanSettingChangedEvent::enabled, vault_settings::flashloan_enabled
+yeap-vault::flashloan_setting::FlashloanSettingChangedEvent::fee_rate, vault_settings::flashloan_fee_rate
+yeap-vault::flashloan_setting::FlashloanSettingChangedEvent::fee_store, vault_settings::flashloan_fee_store_address
+yeap-vault::irm_setting::IRMChangedEvent                                      , vault_settings
+yeap-vault::irm_setting::IRMChangedEvent::new_kind, vault_settings::irm_kind
+yeap-vault::pause_setting::VaultPausedStatusEvent                             , vault_settings
+yeap-vault::supplier_setting::WithdrawerPermissionChangedEvent                , vault_user_setting
+yeap-vault::supplier_setting::WithdrawerPermissionChangedEvent::withdrawer    , vault_user_setting::user
+yeap-vault::supplier_setting::WithdrawerPermissionChangedEvent::new_permission, vault_user_setting::withdraw_permission
+
+yeap-vault::supplier_setting::DepositorPermissionChangedEvent                 , vault_user_setting
+yeap-vault::supplier_setting::DepositorPermissionChangedEvent::depositor      , vault_user_setting::user
+yeap-vault::supplier_setting::DepositorPermissionChangedEvent::new_permission , vault_user_setting::deposit_permission
+
+yeap-vault::borrower_setting::BorrowerConfigChangedEvent                      , vault_user_setting
+yeap-vault::borrower_setting::BorrowerConfigChangedEvent::borrower            , vault_user_setting::user
+yeap-vault::borrower_setting::BorrowerConfigChangedEvent::enabled             , vault_user_setting::borrow_permission
+yeap-vault::borrower_setting::BorrowerConfigChangedEvent::new_cap             , vault_user_setting::borrow_cap
+
+yeap-vault::vault_events::BadDebtMarkedEvent                                  , vault_bad_debt_activities
+yeap-vault::vault_events::BadDebtRepayedEvent                                 , vault_bad_debt_activities
+yeap-vault::vault_events::BadDebtRepayedEvent::amount_repaid                                 , vault_bad_debt_activities::bad_debt_amount
+yeap-vault::vault_events::BadDebtSocializedEvent                              , vault_bad_debt_activities
+yeap-vault::vault_events::BadDebtSocializedEvent::bad_debt_amount_socialized  , vault_bad_debt_activities::bad_debt_amount
+yeap-vault::vault_events::FlashloanEvent                                      , vault_flashloan_activities
+yeap-vault::vault_events::VaultCreatedEvent                                   , vault_info
+yeap-vault::vault_events::VaultStateChangeEvent                               , vault_states_activities
+yeap-vault::vault_events::EmergencyWithdrawEvent                  , vault_emergency_activities
+yeap-vault::vault_events::VaultWhitelistStatusChangedEvent, vault_settings

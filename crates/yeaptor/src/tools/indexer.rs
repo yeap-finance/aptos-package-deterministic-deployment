@@ -10,19 +10,22 @@ use clap::Subcommand;
 use std::path::PathBuf;
 
 #[derive(Subcommand)]
-pub enum IndexerTool {
+/// Processor utilities (generate processor configuration from events and schema)
+pub enum ProcessorTool {
+    /// Generate a processor configuration YAML using event definitions and DB schema (does not run the processor)
     Generate(Generate),
 }
 
-impl IndexerTool {
+impl ProcessorTool {
     pub async fn execute(self) -> crate::CliResult {
         match self {
-            IndexerTool::Generate(tool) => tool.execute_serialized().await,
+            ProcessorTool::Generate(tool) => tool.execute_serialized().await,
         }
     }
 }
 
 #[derive(clap::Parser)]
+/// Generate processor configuration YAML based on event definitions, DB schema, and event-to-table mappings
 pub struct Generate {
     #[clap(short, long, value_parser, default_value = "testnet")]
     pub(crate) network: Network,

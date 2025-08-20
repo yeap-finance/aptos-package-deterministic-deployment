@@ -13,7 +13,9 @@ use std::fs;
 use std::path::PathBuf;
 
 #[derive(Subcommand)]
+/// Event utilities
 pub enum EventTool {
+    /// Generate event definition JSON files from compiled Move packages
     Definition(Definition),
 }
 
@@ -26,6 +28,7 @@ impl EventTool {
 }
 
 #[derive(Parser)]
+/// Generate event definition JSON files for a package (via --package-dir) or all packages in yeaptor.toml
 pub struct Definition {
     #[clap(flatten)]
     pub(crate) move_options: MovePackageOptions,

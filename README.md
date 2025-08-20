@@ -48,7 +48,7 @@ Core focus in this repository:
 4) Submit payloads in order
    - `aptos move run --profile <profile> --json-file ./deployments/<n>-<pkg>-publish.json`
 
-## Configuration (yeaptor.toml)
+   - `aptos move run --profile <profile> --json-file ./deployments/<n>-<pkg>.package.json`
 Keys:
 - format_version: Schema version. Use `1`.
 - yeaptor_address: On‑chain address where `ra_code_deployment` is published.
@@ -62,6 +62,7 @@ Keys:
     - path: Filesystem path to the Move package (containing `Move.toml`).
 
 Example:
+
 ```
 format_version = 1
 yeaptor_address = "0x<address-hosting-ra_code_deployment>"
@@ -84,7 +85,8 @@ packages = [
 Generated outputs
 - Files are written to `--out-dir` in deployment order: `<index>-<package>-publish.json`.
 - Each file calls:
-```
+- Files are written to `--out-dir` in deployment order: `<index>-<package>.package.json`.
+```json
 {
   "function_id": "0x<yeaptor_address>::ra_code_deployment::deploy",
   "type_args": [],
@@ -142,3 +144,4 @@ Issues and PRs are welcome. Please include clear repro steps and tests where pos
 
 ## License
 Apache‑2.0. See `LICENSE`.
+

@@ -1,0 +1,256 @@
+table                              , column                       , column_type, type                , default_value, is_index, is_nullable, is_option, is_primary_key, is_vec
+adaptive_irm_activities            , adjustment_speed             , u128       , move_type           ,              , False   , True       , False    , False         , False
+adaptive_irm_activities            , config_address               , address    , move_type           ,              , True    , True       , False    , False         , False
+adaptive_irm_activities            , curve_steepness              , u128       , move_type           ,              , False   , True       , False    , False         , False
+adaptive_irm_activities            , event_index                  , event_index, event_metadata      ,              , False   , False      , False    , True          , False
+adaptive_irm_activities            , initial_rate_at_target       , u128       , move_type           ,              , False   , True       , False    , False         , False
+adaptive_irm_activities            , max_rate_at_target           , u128       , move_type           ,              , False   , True       , False    , False         , False
+adaptive_irm_activities            , min_rate_at_target           , u128       , move_type           ,              , False   , True       , False    , False         , False
+adaptive_irm_activities            , target_utilization           , u128       , move_type           ,              , False   , True       , False    , False         , False
+adaptive_irm_activities            , timestamp                    , timestamp  , transaction_metadata,              , True    , True       , False    , False         , False
+adaptive_irm_activities            , transaction_version          , version    , transaction_metadata,              , False   , False      , False    , True          , False
+adaptive_irm_current_config        , adjustment_speed             , u128       , move_type           ,              , False   , True       , False    , False         , False
+adaptive_irm_current_config        , config_address               , address    , move_type           ,              , False   , False      , False    , True          , False
+adaptive_irm_current_config        , curve_steepness              , u128       , move_type           ,              , False   , True       , False    , False         , False
+adaptive_irm_current_config        , initial_rate_at_target       , u128       , move_type           ,              , False   , True       , False    , False         , False
+adaptive_irm_current_config        , max_rate_at_target           , u128       , move_type           ,              , False   , True       , False    , False         , False
+adaptive_irm_current_config        , min_rate_at_target           , u128       , move_type           ,              , False   , True       , False    , False         , False
+adaptive_irm_current_config        , target_utilization           , u128       , move_type           ,              , False   , True       , False    , False         , False
+adaptive_irm_current_state         , current_rate_at_target       , u128       , move_type           ,              , False   , True       , False    , False         , False
+adaptive_irm_current_state         , last_update_timestamp_secs   , u64        , move_type           ,              , False   , True       , False    , False         , False
+adaptive_irm_current_state         , state_address                , address    , move_type           ,              , False   , False      , False    , True          , False
+adaptive_irm_state_activities      , current_rate_at_target       , u128       , move_type           ,              , False   , True       , False    , False         , False
+adaptive_irm_state_activities      , event_index                  , event_index, event_metadata      ,              , False   , False      , False    , True          , False
+adaptive_irm_state_activities      , last_update_timestamp_secs   , u64        , move_type           ,              , False   , True       , False    , False         , False
+adaptive_irm_state_activities      , state_address                , address    , move_type           ,              , True    , True       , False    , False         , False
+adaptive_irm_state_activities      , timestamp                    , timestamp  , transaction_metadata,              , True    , True       , False    , False         , False
+adaptive_irm_state_activities      , transaction_version          , version    , transaction_metadata,              , False   , False      , False    , True          , False
+borrow_risk_parameters_current     , brw                          , u64        , move_type           ,              , False   , True       , False    , False         , False
+borrow_risk_parameters_current     , collateral                   , address    , move_type           ,              , True    , False      , False    , True          , False
+borrow_risk_parameters_current     , market                       , address    , move_type           ,              , True    , False      , False    , True          , False
+borrow_risk_parameters_current     , vault                        , address    , move_type           ,              , True    , False      , False    , True          , False
+fixed_price_oracle_activities      , base_asset                   , address    , move_type           ,              , True    , True       , False    , False         , False
+fixed_price_oracle_activities      , deleted                      , bool       , move_type           ,              , False   , True       , False    , False         , False
+fixed_price_oracle_activities      , event_index                  , event_index, event_metadata      ,              , False   , False      , False    , True          , False
+fixed_price_oracle_activities      , oracle_address               , address    , move_type           ,              , True    , True       , False    , False         , False
+fixed_price_oracle_activities      , price                        , u128       , move_type           ,              , False   , True       , False    , False         , False
+fixed_price_oracle_activities      , quote_asset                  , address    , move_type           ,              , True    , True       , False    , False         , False
+fixed_price_oracle_activities      , timestamp                    , timestamp  , transaction_metadata,              , True    , True       , False    , False         , False
+fixed_price_oracle_activities      , transaction_version          , version    , transaction_metadata,              , False   , False      , False    , True          , False
+fixed_price_oracle_current_config  , base_asset                   , address    , move_type           ,              , False   , False      , False    , True          , False
+fixed_price_oracle_current_config  , deleted                      , bool       , move_type           ,              , True    , True       , False    , False         , False
+fixed_price_oracle_current_config  , oracle_address               , address    , move_type           ,              , False   , False      , False    , True          , False
+fixed_price_oracle_current_config  , price                        , u128       , move_type           ,              , False   , True       , False    , False         , False
+fixed_price_oracle_current_config  , quote_asset                  , address    , move_type           ,              , False   , False      , False    , True          , False
+fixed_rate_irm_activities          , config_address               , address    , move_type           ,              , True    , True       , False    , False         , False
+fixed_rate_irm_activities          , event_index                  , event_index, event_metadata      ,              , False   , False      , False    , True          , False
+fixed_rate_irm_activities          , rate_per_second              , u128       , move_type           ,              , False   , True       , False    , False         , False
+fixed_rate_irm_activities          , timestamp                    , timestamp  , transaction_metadata,              , True    , True       , False    , False         , False
+fixed_rate_irm_activities          , transaction_version          , version    , transaction_metadata,              , False   , False      , False    , True          , False
+fixed_rate_irm_current_config      , config_address               , address    , move_type           ,              , False   , False      , False    , True          , False
+fixed_rate_irm_current_config      , rate_per_second              , u128       , move_type           ,              , False   , True       , False    , False         , False
+hyperion_llp_bad_debt_activities   , bad_debt_amount              , u64        , move_type           ,              , False   , True       , False    , False         , False
+hyperion_llp_bad_debt_activities   , bad_debt_shares              , u64        , move_type           ,              , False   , True       , False    , False         , False
+hyperion_llp_bad_debt_activities   , debt_store                   , address    , move_type           ,              , True    , True       , False    , False         , False
+hyperion_llp_bad_debt_activities   , event_index                  , event_index, event_metadata      ,              , False   , False      , False    , True          , False
+hyperion_llp_bad_debt_activities   , position                     , address    , move_type           ,              , True    , True       , False    , False         , False
+hyperion_llp_bad_debt_activities   , timestamp                    , timestamp  , transaction_metadata,              , True    , True       , False    , False         , False
+hyperion_llp_bad_debt_activities   , transaction_version          , version    , transaction_metadata,              , False   , False      , False    , True          , False
+hyperion_llp_bad_debt_activities   , vault                        , address    , move_type           ,              , True    , True       , False    , False         , False
+hyperion_llp_debt_status_activities, debt_store                   , address    , move_type           ,              , True    , True       , False    , False         , False
+hyperion_llp_debt_status_activities, event_index                  , event_index, event_metadata      ,              , False   , False      , False    , True          , False
+hyperion_llp_debt_status_activities, position                     , address    , move_type           ,              , True    , True       , False    , False         , False
+hyperion_llp_debt_status_activities, status                       , u8         , move_type           ,              , False   , True       , False    , False         , False
+hyperion_llp_debt_status_activities, timestamp                    , timestamp  , transaction_metadata,              , True    , True       , False    , False         , False
+hyperion_llp_debt_status_activities, transaction_version          , version    , transaction_metadata,              , False   , False      , False    , True          , False
+hyperion_llp_debt_status_activities, vault                        , address    , move_type           ,              , True    , True       , False    , False         , False
+hyperion_llp_liquidation_activities, collateral_liquidation_amount, u128       , move_type           ,              , False   , True       , False    , False         , False
+hyperion_llp_liquidation_activities, collateral_value_before      , u128       , move_type           ,              , False   , True       , False    , False         , False
+hyperion_llp_liquidation_activities, event_index                  , event_index, event_metadata      ,              , False   , False      , False    , True          , False
+hyperion_llp_liquidation_activities, loan_value_before            , u128       , move_type           ,              , False   , True       , False    , False         , False
+hyperion_llp_liquidation_activities, position                     , address    , move_type           ,              , True    , True       , False    , False         , False
+hyperion_llp_liquidation_activities, repay_amount                 , u128       , move_type           ,              , False   , True       , False    , False         , False
+hyperion_llp_liquidation_activities, timestamp                    , timestamp  , transaction_metadata,              , True    , True       , False    , False         , False
+hyperion_llp_liquidation_activities, transaction_version          , version    , transaction_metadata,              , False   , False      , False    , True          , False
+hyperion_llp_liquidation_activities, vault                        , address    , move_type           ,              , True    , True       , False    , False         , False
+hyperion_llp_position_current      , collateral                   , address    , move_type           ,              , False   , True       , False    , False         , False
+hyperion_llp_position_current      , collateral_type              , address    , move_type           ,              , True    , True       , False    , False         , False
+hyperion_llp_position_current      , owner                        , address    , move_type           ,              , True    , True       , False    , False         , False
+hyperion_llp_position_current      , position                     , address    , move_type           ,              , False   , False      , False    , True          , False
+hyperion_llp_position_current      , status                       , u8         , move_type           ,              , True    , True       , False    , False         , False
+hyperion_llp_position_debt_stores  , debt_store                   , address    , move_type           ,              , False   , True       , False    , False         , False
+hyperion_llp_position_debt_stores  , position                     , address    , move_type           ,              , False   , False      , False    , True          , False
+hyperion_llp_position_debt_stores  , status                       , u8         , move_type           ,              , False   , True       , False    , False         , False
+hyperion_llp_position_debt_stores  , vault                        , address    , move_type           ,              , False   , False      , False    , True          , False
+kinked_irm_activities              , config_address               , address    , move_type           ,              , True    , True       , False    , False         , False
+kinked_irm_activities              , event_index                  , event_index, event_metadata      ,              , False   , False      , False    , True          , False
+kinked_irm_activities              , max_borrow_rate              , u128       , move_type           ,              , False   , True       , False    , False         , False
+kinked_irm_activities              , min_borrow_rate              , u128       , move_type           ,              , False   , True       , False    , False         , False
+kinked_irm_activities              , optimal_borrow_rate          , u128       , move_type           ,              , False   , True       , False    , False         , False
+kinked_irm_activities              , optimal_utilization          , u128       , move_type           ,              , False   , True       , False    , False         , False
+kinked_irm_activities              , timestamp                    , timestamp  , transaction_metadata,              , True    , True       , False    , False         , False
+kinked_irm_activities              , transaction_version          , version    , transaction_metadata,              , False   , False      , False    , True          , False
+kinked_irm_current_config          , config_address               , address    , move_type           ,              , False   , False      , False    , True          , False
+kinked_irm_current_config          , max_borrow_rate              , u128       , move_type           ,              , False   , True       , False    , False         , False
+kinked_irm_current_config          , min_borrow_rate              , u128       , move_type           ,              , False   , True       , False    , False         , False
+kinked_irm_current_config          , optimal_borrow_rate          , u128       , move_type           ,              , False   , True       , False    , False         , False
+kinked_irm_current_config          , optimal_utilization          , u128       , move_type           ,              , False   , True       , False    , False         , False
+oracle_router_activities           , base_asset                   , address    , move_type           ,              , True    , True       , False    , False         , False
+oracle_router_activities           , deleted                      , bool       , move_type           ,              , False   , True       , False    , False         , False
+oracle_router_activities           , event_index                  , event_index, event_metadata      ,              , False   , False      , False    , True          , False
+oracle_router_activities           , oracle                       , address    , move_type           ,              , True    , True       , False    , False         , False
+oracle_router_activities           , oracle_kind                  , u8         , move_type           ,              , False   , True       , False    , False         , False
+oracle_router_activities           , oracle_router                , address    , move_type           ,              , True    , True       , False    , False         , False
+oracle_router_activities           , quote_asset                  , address    , move_type           ,              , True    , True       , False    , False         , False
+oracle_router_activities           , timestamp                    , timestamp  , transaction_metadata,              , True    , True       , False    , False         , False
+oracle_router_activities           , transaction_version          , version    , transaction_metadata,              , False   , False      , False    , True          , False
+oracle_router_current_config       , base_asset                   , address    , move_type           ,              , False   , False      , False    , True          , False
+oracle_router_current_config       , deleted                      , bool       , move_type           ,              , True    , True       , False    , False         , False
+oracle_router_current_config       , oracle                       , address    , move_type           ,              , True    , True       , False    , False         , False
+oracle_router_current_config       , oracle_kind                  , u8         , move_type           ,              , True    , True       , False    , False         , False
+oracle_router_current_config       , oracle_router                , address    , move_type           ,              , False   , False      , False    , True          , False
+oracle_router_current_config       , quote_asset                  , address    , move_type           ,              , False   , False      , False    , True          , False
+pyth_oracle_activities             , asset_identifier             , address    , move_type           ,              , True    , True       , False    , False         , False
+pyth_oracle_activities             , deleted                      , bool       , move_type           ,              , False   , True       , False    , False         , False
+pyth_oracle_activities             , event_index                  , event_index, event_metadata      ,              , False   , False      , False    , True          , False
+pyth_oracle_activities             , max_age_in_seconds           , u64        , move_type           ,              , False   , True       , False    , False         , False
+pyth_oracle_activities             , max_confidence               , u64        , move_type           ,              , False   , True       , False    , False         , False
+pyth_oracle_activities             , oracle_address               , address    , move_type           ,              , True    , True       , False    , False         , False
+pyth_oracle_activities             , pyth_id                      , object     , move_type           ,              , False   , True       , False    , False         , False
+pyth_oracle_activities             , timestamp                    , timestamp  , transaction_metadata,              , True    , True       , False    , False         , False
+pyth_oracle_activities             , transaction_version          , version    , transaction_metadata,              , False   , False      , False    , True          , False
+pyth_oracle_current_config         , asset_identifier             , address    , move_type           ,              , False   , False      , False    , True          , False
+pyth_oracle_current_config         , deleted                      , bool       , move_type           ,              , True    , True       , False    , False         , False
+pyth_oracle_current_config         , max_age_in_seconds           , u64        , move_type           ,              , False   , True       , False    , False         , False
+pyth_oracle_current_config         , max_confidence               , u64        , move_type           ,              , False   , True       , False    , False         , False
+pyth_oracle_current_config         , oracle_address               , address    , move_type           ,              , False   , False      , False    , True          , False
+pyth_oracle_current_config         , pyth_id                      , object     , move_type           ,              , False   , True       , False    , False         , False
+scmd_bad_debt_activities           , bad_debt_amount              , u64        , move_type           ,              , False   , True       , False    , False         , False
+scmd_bad_debt_activities           , bad_debt_shares              , u64        , move_type           ,              , False   , True       , False    , False         , False
+scmd_bad_debt_activities           , debt_store                   , address    , move_type           ,              , True    , True       , False    , False         , False
+scmd_bad_debt_activities           , event_index                  , event_index, event_metadata      ,              , False   , False      , False    , True          , False
+scmd_bad_debt_activities           , position                     , address    , move_type           ,              , True    , True       , False    , False         , False
+scmd_bad_debt_activities           , timestamp                    , timestamp  , transaction_metadata,              , True    , True       , False    , False         , False
+scmd_bad_debt_activities           , transaction_version          , version    , transaction_metadata,              , False   , False      , False    , True          , False
+scmd_bad_debt_activities           , vault                        , address    , move_type           ,              , True    , True       , False    , False         , False
+scmd_debt_status_activities        , debt_store                   , address    , move_type           ,              , True    , True       , False    , False         , False
+scmd_debt_status_activities        , event_index                  , event_index, event_metadata      ,              , False   , False      , False    , True          , False
+scmd_debt_status_activities        , position                     , address    , move_type           ,              , True    , True       , False    , False         , False
+scmd_debt_status_activities        , status                       , u8         , move_type           ,              , False   , True       , False    , False         , False
+scmd_debt_status_activities        , timestamp                    , timestamp  , transaction_metadata,              , True    , True       , False    , False         , False
+scmd_debt_status_activities        , transaction_version          , version    , transaction_metadata,              , False   , False      , False    , True          , False
+scmd_debt_status_activities        , vault                        , address    , move_type           ,              , True    , True       , False    , False         , False
+scmd_liquidation_activities        , collateral_liquidation_amount, u128       , move_type           ,              , False   , True       , False    , False         , False
+scmd_liquidation_activities        , collateral_value_before      , u128       , move_type           ,              , False   , True       , False    , False         , False
+scmd_liquidation_activities        , event_index                  , event_index, event_metadata      ,              , False   , False      , False    , True          , False
+scmd_liquidation_activities        , loan_value_before            , u128       , move_type           ,              , False   , True       , False    , False         , False
+scmd_liquidation_activities        , position                     , address    , move_type           ,              , True    , True       , False    , False         , False
+scmd_liquidation_activities        , repay_amount                 , u128       , move_type           ,              , False   , True       , False    , False         , False
+scmd_liquidation_activities        , timestamp                    , timestamp  , transaction_metadata,              , True    , True       , False    , False         , False
+scmd_liquidation_activities        , transaction_version          , version    , transaction_metadata,              , False   , False      , False    , True          , False
+scmd_liquidation_activities        , vault                        , address    , move_type           ,              , True    , True       , False    , False         , False
+scmd_position_current              , collateral                   , address    , move_type           ,              , False   , True       , False    , False         , False
+scmd_position_current              , collateral_type              , address    , move_type           ,              , False   , True       , False    , False         , False
+scmd_position_current              , owner                        , address    , move_type           ,              , True    , True       , False    , False         , False
+scmd_position_current              , position                     , address    , move_type           ,              , False   , False      , False    , True          , False
+scmd_position_current              , status                       , u8         , move_type           ,              , True    , True       , False    , False         , False
+scmd_position_debt_stores          , debt_store                   , address    , move_type           ,              , False   , True       , False    , False         , False
+scmd_position_debt_stores          , position                     , address    , move_type           ,              , False   , False      , False    , True          , False
+scmd_position_debt_stores          , status                       , u8         , move_type           ,              , False   , True       , False    , False         , False
+scmd_position_debt_stores          , vault                        , address    , move_type           ,              , False   , False      , False    , True          , False
+switchboard_oracle_activities      , aggregator_address           , address    , move_type           ,              , False   , True       , False    , False         , False
+switchboard_oracle_activities      , asset_identifier             , address    , move_type           ,              , True    , True       , False    , False         , False
+switchboard_oracle_activities      , deleted                      , bool       , move_type           ,              , False   , True       , False    , False         , False
+switchboard_oracle_activities      , event_index                  , event_index, event_metadata      ,              , False   , False      , False    , True          , False
+switchboard_oracle_activities      , max_age_in_seconds           , u64        , move_type           ,              , False   , True       , False    , False         , False
+switchboard_oracle_activities      , max_stdev                    , u128       , move_type           ,              , False   , True       , False    , False         , False
+switchboard_oracle_activities      , oracle_address               , address    , move_type           ,              , True    , True       , False    , False         , False
+switchboard_oracle_activities      , timestamp                    , timestamp  , transaction_metadata,              , True    , True       , False    , False         , False
+switchboard_oracle_activities      , transaction_version          , version    , transaction_metadata,              , False   , False      , False    , True          , False
+switchboard_oracle_current_config  , aggregator_address           , address    , move_type           ,              , False   , True       , False    , False         , False
+switchboard_oracle_current_config  , asset_identifier             , address    , move_type           ,              , False   , False      , False    , True          , False
+switchboard_oracle_current_config  , deleted                      , bool       , move_type           ,              , True    , True       , False    , False         , False
+switchboard_oracle_current_config  , max_age_in_seconds           , u64        , move_type           ,              , False   , True       , False    , False         , False
+switchboard_oracle_current_config  , max_stdev                    , u128       , move_type           ,              , False   , True       , False    , False         , False
+switchboard_oracle_current_config  , oracle_address               , address    , move_type           ,              , False   , False      , False    , True          , False
+vault_bad_debt_activities          , bad_debt_amount              , u64        , move_type           ,              , False   , True       , False    , False         , False
+vault_bad_debt_activities          , bad_debt_shares              , u64        , move_type           ,              , False   , True       , False    , False         , False
+vault_bad_debt_activities          , borrower                     , address    , move_type           ,              , False   , True       , False    , False         , False
+vault_bad_debt_activities          , debt_store_address           , address    , move_type           ,              , False   , True       , False    , False         , False
+vault_bad_debt_activities          , event_index                  , event_index, event_metadata      ,              , False   , False      , False    , True          , False
+vault_bad_debt_activities          , event_type                   , event_type , event_metadata      ,              , True    , True       , False    , False         , False
+vault_bad_debt_activities          , timestamp                    , timestamp  , transaction_metadata,              , True    , True       , False    , False         , False
+vault_bad_debt_activities          , total_bad_debt_after         , u128       , move_type           ,              , False   , True       , False    , False         , False
+vault_bad_debt_activities          , total_bad_debt_before        , u128       , move_type           ,              , False   , True       , False    , False         , False
+vault_bad_debt_activities          , transaction_version          , version    , transaction_metadata,              , False   , False      , False    , True          , False
+vault_bad_debt_activities          , vault_address                , address    , move_type           ,              , True    , True       , False    , False         , False
+vault_emergency_activities         , amount                       , u64        , move_type           ,              , False   , True       , False    , False         , False
+vault_emergency_activities         , event_index                  , event_index, event_metadata      ,              , False   , False      , False    , True          , False
+vault_emergency_activities         , timestamp                    , timestamp  , transaction_metadata,              , True    , True       , False    , False         , False
+vault_emergency_activities         , transaction_version          , version    , transaction_metadata,              , False   , False      , False    , True          , False
+vault_emergency_activities         , vault_address                , address    , move_type           ,              , True    , True       , False    , False         , False
+vault_emergency_activities         , withdrawn_by                 , address    , move_type           ,              , False   , True       , False    , False         , False
+vault_flashloan_activities         , amount                       , u64        , move_type           ,              , False   , True       , False    , False         , False
+vault_flashloan_activities         , event_index                  , event_index, event_metadata      ,              , False   , False      , False    , True          , False
+vault_flashloan_activities         , fee                          , u64        , move_type           ,              , False   , True       , False    , False         , False
+vault_flashloan_activities         , timestamp                    , timestamp  , transaction_metadata,              , True    , True       , False    , False         , False
+vault_flashloan_activities         , transaction_version          , version    , transaction_metadata,              , False   , False      , False    , True          , False
+vault_flashloan_activities         , vault_address                , address    , move_type           ,              , True    , True       , False    , False         , False
+vault_info                         , creator                      , address    , move_type           ,              , False   , True       , False    , False         , False
+vault_info                         , debt_asset                   , address    , move_type           ,              , True    , True       , False    , False         , False
+vault_info                         , governance_object_address    , address    , move_type           ,              , False   , True       , False    , False         , False
+vault_info                         , underlying_asset             , address    , move_type           ,              , True    , True       , False    , False         , False
+vault_info                         , underlying_asset_store       , address    , move_type           ,              , False   , True       , False    , False         , False
+vault_info                         , vault_address                , address    , move_type           ,              , False   , False      , False    , True          , False
+vault_user_setting                 , borrow_cap                   , u128       , move_type           ,              , False   , True       , False    , False         , False
+vault_user_setting                 , borrow_permission            , bool       , move_type           ,              , False   , True       , False    , False         , False
+vault_user_setting                 , user                         , address    , move_type           ,              , False   , False      , False    , True          , False
+vault_user_setting                 , withdraw_permission          , bool       , move_type           ,              , False   , True       , False    , False         , False
+vault_user_setting                 , deposit_permission           , bool       , move_type           ,              , False   , True       , False    , False         , False
+vault_user_setting                 , vault                        , address    , move_type           ,              , True    , False      , False    , True          , False
+vault_settings                     , auto_socialize_debt_enabled  , bool       , move_type           ,              , False   , True       , False    , False         , False
+vault_settings                     , emergency_withdraw_enabled   , bool       , move_type           ,              , False   , True       , False    , False         , False
+vault_settings                     , fee_store_address            , address    , move_type           ,              , False   , True       , False    , False         , False
+vault_settings                     , flashloan_enabled            , bool       , move_type           ,              , False   , True       , False    , False         , False
+vault_settings                     , flashloan_fee_rate           , u128       , move_type           ,              , False   , True       , False    , False         , False
+vault_settings                     , flashloan_fee_store_address  , address    , move_type           ,              , False   , True       , False    , False         , False
+vault_settings                     , interest_fee_rate            , u128       , move_type           ,              , False   , True       , False    , False         , False
+vault_settings                     , irm_kind                     , u16        , move_type           ,              , False   , True       , False    , False         , False
+vault_settings                     , paused                       , bool       , move_type           ,              , True    , True       , False    , False         , False
+vault_settings                     , vault_address                , address    , move_type           ,              , False   , False      , False    , True          , False
+vault_settings, whitelisted, bool, move_type, False, False, True, False, False, False
+vault_states_activities            , bad_debt                     , u128       , move_type           ,              , False   , True       , False    , False         , False
+vault_states_activities            , cash                         , u128       , move_type           ,              , False   , True       , False    , False         , False
+vault_states_activities            , current_interest_rate        , u128       , move_type           ,              , False   , True       , False    , False         , False
+vault_states_activities            , event_index                  , event_index, event_metadata      ,              , False   , False      , False    , True          , False
+vault_states_activities            , kind                         , u8         , move_type           ,              , False   , True       , False    , False         , False
+vault_states_activities            , last_interest_update_time    , u64        , move_type           ,              , False   , True       , False    , False         , False
+vault_states_activities            , timestamp                    , timestamp  , transaction_metadata,              , True    , True       , False    , False         , False
+vault_states_activities            , total_borrows                , u128       , move_type           ,              , False   , True       , False    , False         , False
+vault_states_activities            , total_debt_shares            , u128       , move_type           ,              , False   , True       , False    , False         , False
+vault_states_activities            , total_shares                 , u128       , move_type           ,              , False   , True       , False    , False         , False
+vault_states_activities            , transaction_version          , version    , transaction_metadata,              , False   , False      , False    , True          , False
+vault_states_activities            , vault_address                , address    , move_type           ,              , True    , True       , False    , False         , False
+earn_user_operations               , user_address                 , address    , move_type           ,              , True    , True       , False    , False         , False
+earn_user_operations               , vault_address                , address    , move_type           ,              , True    , True       , False    , False         , False
+earn_user_operations               , user_operation               , string     , move_type           ,              , False   , True       , False    , False         , False
+earn_user_operations               , underlying_asset_amount      , u64        , move_type           ,              , False   , True       , False    , False         , False
+earn_user_operations               , share_amount                 , u64        , move_type           ,              , False   , True       , False    , False         , False
+earn_user_operations               , event_index                  , event_index, event_metadata      ,              , False   , False      , False    , True          , False
+earn_user_operations               , timestamp                    , timestamp  , transaction_metadata,              , True    , True       , False    , False         , False
+earn_user_operations               , transaction_version          , version    , transaction_metadata,              , False   , False      , False    , True          , False
+
+borrow_market                      , protocol                     , string     , move_type           ,              , False   , True       , False    , False         , False
+borrow_market                      , market                       , address    , move_type           ,              , False   , False      , False    , True          , False
+borrow_market                      , collateral                   , address    , move_type           ,              , True    , True       , False    , False         , False
+borrow_market                      , oracle                       , address    , move_type           ,              , True    , True       , False    , False         , False
+borrow_market                      , crf                          , u64        , move_type           ,              , False   , True       , False    , False         , False
+borrow_market                      , ltv                          , u64        , move_type           ,              , False   , True       , False    , False         , False
+borrow_market                      , lltv                         , u64        , move_type           ,              , False   , True       , False    , False         , False
+borrow_market                      , liquidation_bonus_bps        , u64        , move_type           ,              , False   , True       , False    , False         , False
+borrow_market                      , max_borrowable_vaults        , u64        , move_type           ,              , False   , True       , False    , False         , False
+borrow_market                      , status                       , u8         , move_type           ,             0, True    , True       , False    , False         , False
+claimable_token_config             , market                       , address    , move_type           ,              , True    , False      , False    , True          , False
+claimable_token_config             , reward_token                 , address    , move_type           ,              , False   , False      , False    , True          , False
+claimable_token_config             , claim_fee                    , u64        , move_type           ,              , False   , True       , False    , False         , False
+claimable_token_config             , deleted                      , bool       , move_type           ,              , False   , True       , False    , False         , False
