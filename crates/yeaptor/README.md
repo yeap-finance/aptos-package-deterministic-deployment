@@ -7,7 +7,7 @@ What it does
 - Computes a resource account address for each deployment: create_resource_address(publisher, seed)
 - Builds each listed Move package with the Aptos builder, injecting named addresses so that every package’s `address_name` resolves to the computed resource account address
 - Emits one JSON file per package that calls `<yeaptor_address>::ra_code_deployment::deploy(seed, metadata, modules)`
-- Optionally generates per‑package event definition JSON files from compiled Move packages (via `yeaptor event definition` or `deployment build --with-event`)
+- Optionally generates per‑package event definition JSON files from compiled Move packages (via `yeaptor event generate` or `deployment build --with-event`)
 - Generates (does not run) a processor configuration YAML from event definitions and CSV inputs (`db_schema.csv`, `event_mappings.csv`) via `yeaptor processor generate`
 
 Prerequisites
@@ -46,7 +46,7 @@ Build publish payload JSON files for packages defined in `yeaptor.toml`. Optiona
   - `<out-dir>/events/<package>.event.json` (when `--with-event`)
   - `<out-dir>/addresses.toml` resolved named addresses
 
-### yeaptor event definition
+### yeaptor event generate
 Generate event definition JSON files from compiled Move packages.
 
 - Behavior
@@ -56,8 +56,8 @@ Generate event definition JSON files from compiled Move packages.
   - `--out-dir <PATH>`: Output directory for event JSON (default: `./events`)
   - Standard Aptos Move build flags (e.g. `--package-dir <PATH>`)
 - Examples
-  - All from config: `yeaptor event definition --config ./yeaptor.toml --out-dir ./events`
-  - Single package: `yeaptor event definition --config ./yeaptor.toml --out-dir ./events --package-dir ./packages/proxy-account`
+  - All from config: `yeaptor event generate --config ./yeaptor.toml --out-dir ./events`
+  - Single package: `yeaptor event generate --config ./yeaptor.toml --out-dir ./events --package-dir ./packages/proxy-account`
 
 ### yeaptor processor generate
 Generate (not run) a processor configuration YAML from event definitions and a DB schema + event‑to‑table mapping.

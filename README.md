@@ -125,8 +125,8 @@ Turn a declarative `yeaptor.toml` plan into ready‑to‑run Aptos entry‑funct
 Generate per‑package event definition JSON files from compiled Move packages.
 
 - Command
-  - All from config: `yeaptor event definition --config ./yeaptor.toml --out-dir ./events`
-  - Single package: `yeaptor event definition --config ./yeaptor.toml --out-dir ./events --package-dir ./packages/<pkg>`
+  - All from config: `yeaptor event generate --config ./yeaptor.toml --out-dir ./events`
+  - Single package: `yeaptor event generate --config ./yeaptor.toml --out-dir ./events --package-dir ./packages/<pkg>`
 - Output
   - `./events/<package>.event.json` files (array of event definitions with fields/types)
 

@@ -45,7 +45,7 @@ pub struct Generate {
 #[async_trait::async_trait]
 impl CliCommand<String> for Generate {
     fn command_name(&self) -> &'static str {
-        "definition"
+        "generate_processor_config"
     }
     async fn execute(self) -> CliTypedResult<String> {
         let db_schema = load_db_schema_from_csv(self.db_schema.as_path()).map_err(|e| {

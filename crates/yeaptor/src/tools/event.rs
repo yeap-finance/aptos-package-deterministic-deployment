@@ -16,20 +16,20 @@ use std::path::PathBuf;
 /// Event utilities
 pub enum EventTool {
     /// Generate event definition JSON files from compiled Move packages
-    Definition(Definition),
+    Generate(Generate),
 }
 
 impl EventTool {
     pub async fn execute(self) -> CliResult {
         match self {
-            EventTool::Definition(tool) => tool.execute_serialized().await,
+            EventTool::Generate(tool) => tool.execute_serialized().await,
         }
     }
 }
 
 #[derive(Parser)]
 /// Generate event definition JSON files for a package (via --package-dir) or all packages in yeaptor.toml
-pub struct Definition {
+pub struct Generate {
     #[clap(flatten)]
     pub(crate) move_options: MovePackageOptions,
     #[clap(flatten)]
@@ -44,9 +44,9 @@ pub struct Definition {
 }
 
 #[async_trait::async_trait]
-impl CliCommand<String> for Definition {
+impl CliCommand<String> for Generate {
     fn command_name(&self) -> &'static str {
-        "definition"
+        "generate_event_definitions"
     }
     async fn execute(self) -> CliTypedResult<String> {
         let cfg = load_config(&self.config)
