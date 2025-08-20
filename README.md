@@ -46,9 +46,9 @@ Core focus in this repository:
 3) Generate publish payloads
    - `yeaptor deployment build --config ./yeaptor.toml --out-dir ./deployments`
 4) Submit payloads in order
-   - `aptos move run --profile <profile> --json-file ./deployments/<n>-<pkg>-publish.json`
-
    - `aptos move run --profile <profile> --json-file ./deployments/<n>-<pkg>.package.json`
+
+## Configuration (yeaptor.toml)
 Keys:
 - format_version: Schema version. Use `1`.
 - yeaptor_address: On‑chain address where `ra_code_deployment` is published.
@@ -83,9 +83,10 @@ packages = [
 ```
 
 Generated outputs
-- Files are written to `--out-dir` in deployment order: `<index>-<package>-publish.json`.
-- Each file calls:
 - Files are written to `--out-dir` in deployment order: `<index>-<package>.package.json`.
+- If `--with-event` is provided to `deployment build`, event files are written under `--out-dir/events/<package>.event.json`.
+- An `addresses.toml` with resolved named addresses is also written to `--out-dir`.
+- Each publish file calls:
 ```json
 {
   "function_id": "0x<yeaptor_address>::ra_code_deployment::deploy",
@@ -104,6 +105,52 @@ Notes
 - `address_name` must match the named address used in the package’s `Move.toml`.
 - `yeaptor_address` must be the on‑chain address hosting the `ra_code_deployment` module.
 
+## CLI features
+
+### 1) Deployment build
+Turn a declarative `yeaptor.toml` plan into ready‑to‑run Aptos entry‑function JSON payloads.
+
+- Command
+  - `yeaptor deployment build --config ./yeaptor.toml --out-dir ./deployments`
+  - Build one package only: add `--package-dir <path/to/package>`
+  - Include event definitions alongside payloads: add `--with-event` (writes to `<out-dir>/events/`)
+- Outputs
+  - `<out-dir>/<index>-<package>.package.json` per package
+  - `<out-dir>/events/<package>.event.json` (when `--with-event`)
+  - `<out-dir>/addresses.toml` resolved named addresses
+- Submit payloads
+  - `aptos move run --profile <profile> --json-file <out-dir>/<index>-<package>.package.json`
+
+### 2) Event generation
+Generate per‑package event definition JSON files from compiled Move packages.
+
+- Command
+  - All from config: `yeaptor event definition --config ./yeaptor.toml --out-dir ./events`
+  - Single package: `yeaptor event definition --config ./yeaptor.toml --out-dir ./events --package-dir ./packages/<pkg>`
+- Output
+  - `./events/<package>.event.json` files (array of event definitions with fields/types)
+
+### 3) Processor config generation (no‑code indexer)
+Generate, don’t run, a processor configuration YAML that can be used by a no‑code/indexer pipeline.
+
+- Command
+  - `yeaptor processor generate --starting-version <u64> \
+      --events-dir ./events \
+      --db_schema ./db_schema.csv \
+      --event_mapping ./event_mappings.csv \
+      --output-file ./processor_config.yaml`
+- Inputs
+  - Event definitions directory (`--events-dir`), typically from “Event generation” or `deployment build --with-event`
+  - Database schema CSV (`--db_schema`)
+  - Event‑to‑table mapping CSV (`--event_mapping`)
+- Output
+  - `processor_config.yaml` with:
+    - `custom_config.db_schema`: tables/columns
+    - `custom_config.events`: event→table/column mapping
+    - `custom_config.transaction_metadata` and `custom_config.event_metadata`
+- Notes
+  - This doesn’t run an indexer; it only produces the config for downstream use.
+
 ## Move module: ra_code_deployment::ra_code_deployment
 Deterministic deployment and upgrade of Move packages to resource accounts using a publisher‑provided seed.
 
@@ -116,15 +163,15 @@ Public entry functions
 - create_resource_account(publisher: &signer, seed: vector<u8>)
   - Creates the resource account derived from `(publisher, seed)`; aborts if it already exists.
   - Stores `PublishPackageCap` and initializes manageable admin with `publisher` as admin.
-- deploy(publisher: &signer, seed: vector<u8>, metadata_serialized: vector<u8>, code: vector<vector<u8>>) acquires PublishPackageCap
+- deploy(publisher: &signer, seed: vector<u8>, metadata_serialized: vector<u8>, code: vector<vector<u8>>)` acquires PublishPackageCap
   - Ensures the resource account exists, then publishes the package to that resource account (upgrade if already published).
-- batch_deploy(publisher: &signer, seed: vector<u8>, metadatas: vector<vector<u8>>, packages: vector<vector<vector<u8>>>) acquires PublishPackageCap
+- batch_deploy(publisher: &signer, seed: vector<u8>, metadatas: vector<vector<u8>>, packages: vector<vector<vector<u8>>>)` acquires PublishPackageCap
   - Ensures the resource account exists, then publishes multiple packages in order.
-- publish(admin: &signer, metadata_serialized: vector<u8>, code: vector<vector<u8>>, resource_address: address) acquires PublishPackageCap
+- publish(admin: &signer, metadata_serialized: vector<u8>, code: vector<vector<u8>>, resource_address: address)` acquires PublishPackageCap
   - Requires `admin` to be a manageable admin for `resource_address`. Publishes/upgrades using the stored capability.
-- batch_publish(admin: &signer, resource_address: address, metadatas: vector<vector<u8>>, packages: vector<vector<vector<u8>>>) acquires PublishPackageCap
+- batch_publish(admin: &signer, resource_address: address, metadatas: vector<vector<u8>>, packages: vector<vector<vector<u8>>>)` acquires PublishPackageCap
   - Admin‑gated batch publish to an existing resource account.
-- freeze_resource_account(admin: &signer, resource_address: address) acquires PublishPackageCap
+- freeze_resource_account(admin: &signer, resource_address: address)` acquires PublishPackageCap
   - Admin‑gated. Revokes management and removes the stored capability to prevent further publishes/upgrades.
 
 Storage under the resource account
@@ -144,4 +191,3 @@ Issues and PRs are welcome. Please include clear repro steps and tests where pos
 
 ## License
 Apache‑2.0. See `LICENSE`.
-
