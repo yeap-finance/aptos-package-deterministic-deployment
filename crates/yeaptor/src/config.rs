@@ -3,7 +3,7 @@ use aptos_types::account_address::AccountAddress;
 use serde::Deserialize;
 use std::collections::BTreeMap;
 use std::fs;
-use std::path::Path;
+use std::path::{Path, PathBuf};
 
 // Import IncludedArtifacts from the aptos framework
 pub use aptos::move_tool::IncludedArtifacts;
@@ -33,7 +33,7 @@ pub struct Deployment {
 #[derive(Deserialize, Debug, Clone)]
 pub struct PackageSpec {
     pub address_name: String,
-    pub path: String,
+    pub path: PathBuf,
     #[serde_as(as = "Option<serde_with::DisplayFromStr>")]
     #[serde(default)]
     pub include_artifacts: Option<IncludedArtifacts>,
