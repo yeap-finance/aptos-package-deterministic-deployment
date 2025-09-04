@@ -8,6 +8,7 @@ use aptos_types::account_address::{AccountAddress, create_resource_address};
 use std::collections::BTreeMap;
 
 use std::path::Path;
+use aptos_framework::docgen::DocgenOptions;
 
 #[derive(Debug, Clone)]
 pub struct YeaptorEnv {
@@ -89,6 +90,7 @@ impl YeaptorEnv {
         &self,
         included_args: &IncludedArtifactsArgs,
         move_options: &MovePackageOptions,
+        docgen_options: Option<DocgenOptions>,
     ) -> CliTypedResult<Vec<BuiltDeployment>> {
         let mut deployments = Vec::new();
         for deployment in &self.config.deployments {
@@ -109,7 +111,7 @@ impl YeaptorEnv {
                     .as_ref()
                     .unwrap_or(&included_args.included_artifacts);
                 let pack = self
-                    .build_package(pkg_path, included_artifacts, move_options)
+                    .build_package(pkg_path, included_artifacts, move_options, docgen_options.clone())
                     .expect("Failed to build package");
 
                 let d = BuiltDeployment {
@@ -128,12 +130,15 @@ impl YeaptorEnv {
         package_dir: &Path,
         included_args: &IncludedArtifacts,
         move_options: &MovePackageOptions,
+        docgen_options: Option<DocgenOptions>,
     ) -> CliTypedResult<BuiltPackage> {
         let mut build_options = included_args.build_options(move_options)?;
         build_options.install_dir = move_options.output_dir.clone();
         let mut named_addresses = self.named_addresses.clone();
         named_addresses.extend(build_options.named_addresses.clone());
         build_options.named_addresses = named_addresses;
+        build_options.with_docs = docgen_options.is_some();
+        build_options.docgen_options = docgen_options;
         let pack = BuiltPackage::build(package_dir.to_path_buf(), build_options)
             .map_err(|e| anyhow!("Move compilation error: {:#}", e))?;
         Ok(pack)
@@ -144,6 +149,7 @@ impl YeaptorEnv {
         package_dir: &Path,
         included_args: &IncludedArtifactsArgs,
         move_options: &MovePackageOptions,
+        doc_options: Option<DocgenOptions>,
     ) -> CliTypedResult<(usize, BuiltDeployment)> {
         // Canonicalize the input package directory for proper comparison
         let canonical_package_dir = package_dir.canonicalize().map_err(|e| {
@@ -173,6 +179,7 @@ impl YeaptorEnv {
                         canonical_pkg_path.as_path(),
                         &included_args.included_artifacts,
                         move_options,
+                        doc_options,
                     )?;
                     let deployment = BuiltDeployment {
                         publisher: self

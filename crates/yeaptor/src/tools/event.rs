@@ -68,7 +68,7 @@ impl CliCommand<String> for Generate {
         let mut writen = 0;
         for package_dir in &packages {
             let pack =
-                env.build_package(&package_dir, &IncludedArtifacts::None, &self.move_options)?;
+                env.build_package(&package_dir, &IncludedArtifacts::None, &self.move_options, None)?;
 
             let all_events = build_event_definition(&pack);
 

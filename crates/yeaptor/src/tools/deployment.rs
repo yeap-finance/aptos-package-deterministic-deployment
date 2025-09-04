@@ -11,6 +11,7 @@ use clap::{Parser, Subcommand};
 use serde_json::json;
 use std::fs;
 use std::path::PathBuf;
+use aptos_framework::docgen::DocgenOptions;
 
 #[derive(Subcommand)]
 /// Build publish payload JSON files and optionally event definition files from yeaptor.toml deployments
@@ -32,6 +33,8 @@ pub struct Build {
     pub(crate) included_artifacts_args: IncludedArtifactsArgs,
     #[clap(flatten)]
     pub(crate) move_options: MovePackageOptions,
+    #[clap(flatten)]
+    pub(crate) doc_options: Option<DocgenOptions>,
     #[clap(flatten)]
     pub(crate) prompt_options: PromptOptions,
     /// Path to yeaptor config (TOML)
@@ -71,12 +74,13 @@ impl CliCommand<String> for Build {
                     package_dir,
                     &self.included_artifacts_args,
                     &self.move_options,
+                    self.doc_options.clone(),
                 )
                 .with_context(|| format!("failed to build package at {}", package_dir.display()))?;
             vec![built_deployment]
         } else {
             // Build all deployments as before
-            env.build_all(&self.included_artifacts_args, &self.move_options)
+            env.build_all(&self.included_artifacts_args, &self.move_options, self.doc_options.clone())
                 .with_context(|| "failed to build all deployments")?
                 .into_iter()
                 .enumerate()
